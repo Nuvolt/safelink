@@ -1,0 +1,18 @@
+{
+  "name": "sitelink",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "underscore": "~1.4.4",
+    "async": "~0.1.22",
+    "q": "~0.9.6",
+    "moment": "~2.1.0",
+    "bunyan": "~0.21.4",
+    "redis": "~0.8.4",
+    "hiredis": "~0.1.15",
+    "request": "~2.27.0",
+    "querystring": "~0.2.0",
+    "shortid": "~2.0.0",
+    "underscore-query": "~0.3.0"
+  }
+}
