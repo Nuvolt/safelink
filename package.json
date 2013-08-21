@@ -1,7 +1,14 @@
 {
   "name": "sitelink",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0",
+  "private": false,
+  "author": "Joel Grenon <jgrenon@vibes.io>",
+  "description": "SafeLink is an open-source NodeJS library created to maintain long-term communication between distant remote sites with varying network quality",
+  "repository":{
+      "type":"git",
+      "url": ""
+  },
+  "keywords":["messaging", "remoting","command", "response", "events", "heartbeat", "long-polling"],
   "dependencies": {
     "underscore": "~1.4.4",
     "async": "~0.1.22",
@@ -13,5 +20,9 @@
     "request": "~2.27.0",
     "shortid": "~2.0.0",
     "underscore-query": "~0.3.0"
-  }
+  },
+  "license": "Apache V2.0",
+    "engines":{
+        "node" : ">=0-10.x"
+    }
 }

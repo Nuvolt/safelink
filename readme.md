@@ -11,3 +11,13 @@ of our customers, without much success, we decided to create our own library to 
 4. **Event Pattern** An agent might subscribe to a number of network events that will be broadcasted by the central process. Events are the way agents may communicate between themselves to understand the overall network condition or to react to specific events.
 5. **JSON based** The protocol should transport JSON payloads.
 
+## Getting Started
+
+### Installation
+
+You install Safelink in your project using NPM
+
+   npm install safelink --save
+
+### Setting up a dispatcher
+
