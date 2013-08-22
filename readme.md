@@ -17,7 +17,29 @@ of our customers, without much success, we decided to create our own library to 
 
 You install Safelink in your project using NPM
 
-   npm install safelink --save
+    npm install safelink --save
 
 ### Setting up a dispatcher
+
+#### Basic HTTP server
+
+SafeLink dispatcher is the server side component that is responsible for mamaging agent communication links. All communication messages are transported through HTTP and the simplest way to use Safelink is to instantiate the dispatcher and start listening on a given port (default to 9090). 
+
+	var Dispatcher = require('safelink').Dispatcher;
+
+    var dispatcher = new Dispatcher({
+        port:9090
+    });
+
+    dispatcher.listen().then(function() {
+        dispatcher.log.info("Listening for incoming agent connections");
+    }, function(err) {
+    	displatcher.log.error(err, "General communication error");
+    });
+
+Everywhere in the library, we use *promises* from the Q library. The promise abstraction is better than simple callbacks, even more for remoting software where responses may or may not be available directly (or cached). The power of Q promises is that it will return the result if the promise has already been fulfilled, thus freeing the client from knowing the actual state of the request. 
+
+#### Integrated with Connect or Express
+
+
 

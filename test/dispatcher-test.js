@@ -27,13 +27,13 @@
 
         }, 15000);
 
-        setInterval(function(){
+        setInterval(function() {
             dispatcher.log.debug("Emitting 'custom' event...");
             dispatcher.emit('custom', {
                 field1:true,
                 field2:"test"
             });
-        }, 25000);
+        }, 5000);
 
     }, function(err) {
         this.log.error(err);

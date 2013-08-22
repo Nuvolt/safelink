@@ -29,15 +29,15 @@
             }
         },
         endpoint:"http://localhost:9090/agent",
-        log: log.child({level:'info'}),
+        log: log.child({level:'trace'}),
         commandHandlers:{
             "switch-server": switchServer,
             'multimeter': multimeter
         },
-        eventHandlers:{}
+        channels:['system']
     });
 
-    agent.connect().then(function(connection) {
+    agent.connect({waitForDispatcher:true}).then(function(connection) {
 
         // Register to network events
         connection.on('heartbeat', function(e) {
@@ -62,20 +62,52 @@
             agent.log.error(err, "General Error");
         });
 
-        connection.subscribeTo('custom', function(data) {
-            agent.log.info(data, "Received custom event with attached data");
+        connection.on('configure', function(command) {
+            console.dir(command);
+            agent.log.info("Configuring this agent connection. This is the time to connect event handlers");
+            if(command.payload.restart)
+                agent.log.warn("Dispatcher was restarted, we need to force our subscription back");
+            else
+                agent.log.debug("Agent was started, no need to force subscriptions");
+
+            connection.subscribeTo('custom', function(data) {
+                agent.log.info(data, "Received custom event with attached data");
+            }, {force: command.payload.restart});
+
+            connection.subscribeTo('agent-customer-event', function(e) {
+                agent.log.info(e, "Received our custom event after a round trip through the dispatcher");
+            }, {force: command.payload.restart});
         });
 
+        // Repeat these for testing
+        setInterval(function() {
+
+            // Execute a command and expect a response from dispatcher
+            connection.execute("my-command", {param1:'value', params2:[1, 2, 3]}).then(function(result) {
+                agent.log.info(result, "TEST: Successfully received a response from command my-command");
+            }, function(err) {
+                agent.log.error(err, "Unable to execute my-command");
+            });
+
+            // We broadcast our own custom event
+            connection.broadcast("agent-customer-event", {data:'payload-from-agent'});
+
+            // Broadcast only to a specific channel
+            connection.broadcast("system-event", {data:'system-related-data'}, {
+                channels:['system']
+            });
+
+        }, 18000);
 
     }, function(err) {
         agent.log.error(err, "Unable to establish connection");
     });
 
-    function switchServer(command, deferredResult){
+    function switchServer(command, deferredResult) {
         deferredResult.resolve({});
     }
 
-    function multimeter(command, deferredResult){
+    function multimeter(command, deferredResult) {
         _.delay(function(){
             deferredResult.resolve({
                 voltage: 120.9,
