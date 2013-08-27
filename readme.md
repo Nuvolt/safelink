@@ -11,6 +11,11 @@ of our customers, without much success, we decided to create our own library to 
 4. **Event Pattern** An agent might subscribe to a number of network events that will be broadcasted by the central process. Events are the way agents may communicate between themselves to understand the overall network condition or to react to specific events.
 5. **JSON based** The protocol should transport JSON payloads.
 
+## Version History
+
+- 0.3.0 : Add support for agent-connected event from the dispatcher. This will help host add logic on agent connection
+
+
 ## Getting Started
 
 ### Installation
@@ -39,7 +44,7 @@ SafeLink dispatcher is the server side component that is responsible for mamagin
 
 Everywhere in the library, we use *promises* from the Q library. The promise abstraction is better than simple callbacks, even more for remoting software where responses may or may not be available directly (or cached). The power of Q promises is that it will return the result if the promise has already been fulfilled, thus freeing the client from knowing the actual state of the request. 
 
-#### Integrated with Connect or Express
+
 
 
 
