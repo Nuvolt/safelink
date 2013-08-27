@@ -118,7 +118,9 @@
         "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js": {
             "name": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "WatchDog": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -181,6 +183,33 @@
                 {
                     "name": "cfg",
                     "description": ""
+                }
+            ],
+            "is_constructor": 1
+        },
+        "WatchDog": {
+            "name": "WatchDog",
+            "shortname": "WatchDog",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
+            "line": 22,
+            "access": "protected",
+            "tagname": "",
+            "description": "Each instance is responsible for monitoring the state of a single agent. If we don't receive heartbeat at regular intervals,\nthe watchdog will emit an agent-disconnected event to reset the agent communication.",
+            "params": [
+                {
+                    "name": "agent",
+                    "description": "An agent object (with id) to watch",
+                    "type": "Object"
+                },
+                {
+                    "name": "dispatcher",
+                    "description": "The dispatcher hosting this watchdog",
+                    "type": "Object"
                 }
             ],
             "is_constructor": 1
@@ -484,6 +513,38 @@
             "class": "Agent"
         },
         {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 518,
+            "itemtype": "method",
+            "name": "dispatch",
+            "access": "private",
+            "tagname": "",
+            "description": "Helper used to package a command to the dispatcher. Will apply the right format and properly handle results, including errors.",
+            "params": [
+                {
+                    "name": "agent",
+                    "description": ""
+                },
+                {
+                    "name": "key",
+                    "description": ""
+                },
+                {
+                    "name": "payload",
+                    "description": ""
+                },
+                {
+                    "name": "callback",
+                    "description": "The callback that will be called when we receive the result (or error)"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "Agent"
+        },
+        {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
@@ -600,7 +661,7 @@
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "class": ""
+            "class": "WatchDog"
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/test/agent-test.js",
@@ -634,6 +695,10 @@
         {
             "message": "replacing incorrect tag: returns with return",
             "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:245"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:518"
         },
         {
             "message": "replacing incorrect tag: extend with extends",

@@ -29,7 +29,7 @@
             </li>
         </div>
         <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
-            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent", "classes/Dispatcher"]'>
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent", "classes/Dispatcher", "classes/WatchDog"]'>
         </form>
     </div>
 </div>
@@ -124,6 +124,15 @@
 
     WatchDog = (function(){
 
+        /**
+         * @class WatchDog
+         * @protected
+         * @description Each instance is responsible for monitoring the state of a single agent. If we don&#x27;t receive heartbeat at regular intervals,
+         * the watchdog will emit an agent-disconnected event to reset the agent communication.
+         * @param agent {Object} An agent object (with id) to watch
+         * @param dispatcher {Object} The dispatcher hosting this watchdog
+         * @constructor
+         */
         function WatchDog(agent, dispatcher) {
             var _this = this;
 
