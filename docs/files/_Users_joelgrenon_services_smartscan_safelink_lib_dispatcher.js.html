@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js - Safelink</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap-responsive.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+        
+	    <img alt="Safelink" src="../assets/css/logo.png" style="max-height: 65%;" title="Safelink">
+        
+            Safelink
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.3.6</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+	    <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-tabs" style="margin-bottom:0;">
+            <li class="active"><a href="#classes" data-toggle="tab">Classes</a></li>
+            <li><a href="#modules" data-toggle="tab">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" placeholder="Type to filter APIs">
+        </div>
+
+        <div class="tab-content" style="border: 1px solid #DDD; border-top:0;">
+            <div class="tab-pane active" id="classes">
+                <ul id="api-classes" class="nav nav-list">
+                    
+                        <li><a href="../classes/Agent.html">Agent</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="tab-pane" id="modules">
+                <ul id="api-modules" class="nav nav-list">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        <div class="span9">
+                <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+/**
+ *
+ * Copyright 2013 Joel Grenon
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+(function(){
+    var util = require(&#x27;util&#x27;),
+        http = require(&#x27;http&#x27;),
+        Q = require(&#x27;q&#x27;),
+        shortId = require(&#x27;shortid&#x27;),
+        _ = require(&#x27;underscore&#x27;),
+        moment = require(&#x27;moment&#x27;),
+        redis = require(&#x27;redis&#x27;),
+        async = require(&#x27;async&#x27;),
+        bunyan = require(&#x27;bunyan&#x27;),
+        WatchDog = require(&#x27;./watchdog&#x27;),
+        events = require(&#x27;events&#x27;);
+
+    require(&quot;underscore-query&quot;);
+
+    Dispatcher = (function(){
+
+        var server;
+
+        const protocolMap = require(&#x27;./protocol&#x27;);
+        const VERSION = 100;
+        const pendingCommands = [];
+        const watchDogs = {};
+
+        function Dispatcher(cfg) {
+            var _this = this;
+            this.port = cfg.port || 8080;
+            this.log = cfg.log || bunyan.createLogger({name:&#x27;dispatcher&#x27;, level: &#x27;trace&#x27;});
+            this.commandHandlers = {};
+
+            this.db = redis.createClient(cfg.redis);
+            this.db.on(&#x27;error&#x27;, _.bind(function(e) {
+                this.emit(&#x27;internal.db.error&#x27;, e);
+            }, this));
+
+            this.eventSubscriptions = [];
+
+            server = http.createServer(function(req, res) {
+
+                if (req.method == &#x27;POST&#x27;) {
+                    var body = &#x27;&#x27;;
+                    req.on(&#x27;data&#x27;, function (data) {
+                        body += data;
+                    });
+                    req.on(&#x27;end&#x27;, function () {
+                        var content = JSON.parse(body);
+
+                        // Do something...
+                        var handler = protocolMap[content.key];
+                        if(handler) {
+                            Q.fcall(_.bind(handler, _this), content).then(function(result) {
+                                res.end(JSON.stringify({success:true, v:VERSION, data: result}));
+                            }, function(err) {
+                                res.end(JSON.stringify({success:false, v:VERSION, error:err}));
+                            });
+                        }
+                        else {
+                            res.end(JSON.stringify({success:false, error:&#x27;unknown-key&#x27;, v:VERSION}));
+                        }
+                    });
+                }
+                else
+                    res.end(&quot;error&quot;);
+            });
+
+            // Launch a command cleanup job to clear completed and lost commands
+            this.commandMonitorInterval = setInterval(function() {
+                _this.log.debug(&quot;Analyzing %d pending commands for cleanup&quot;, pendingCommands.length);
+
+                var activeOrCompletedCommands = _.query(pendingCommands, {status:{ $ne : &#x27;PENDING&#x27;}});
+
+                _this.log.debug(&quot;Found %d candidate commands for cleanup (completed or dead)&quot;, activeOrCompletedCommands.length);
+
+                async.forEach(activeOrCompletedCommands, function(cmd, callback) {
+                    var delta = moment().utc().unix() - cmd.ts;
+                    _this.log.trace(cmd, &quot;Checking command for cleanup&quot;);
+
+                    // First process active commands with no results
+                    if(cmd.status === &#x27;ACTIVE&#x27; &amp;&amp; delta &gt; 60) {
+                        cmd.defer.reject(new Error(&quot;no-response&quot;));
+                        cmd.status = &#x27;COMPLETE&#x27;;
+                        _this.log.warn(&quot;Command %s is now dead and will be cleaned-up&quot;, cmd.id);
+                    }
+
+                    if(cmd.status === &#x27;COMPLETE&#x27;) {
+                        _this.log.trace(&quot;Cleaning completed command %s&quot;, cmd.id);
+
+                        // Remove from pendingCommands
+                        pendingCommands.remove(cmd);
+
+                        // Remove from Redis
+                        _this.db.del(cmd.id);
+
+                        _this.log.trace(&quot;Command %s has been removed from system&quot;, cmd.id);
+                    }
+
+                    callback();
+
+                }, function(err) {
+                    if(err)
+                        _this.log.error(err, &quot;There was a problem while we were cleaning up commands... error is&quot;, err);
+                    else
+                        _this.log.debug(&quot;Cleanup report: %d remaining pending commands after cleanup&quot;, pendingCommands.length);
+                });
+
+            }, 30000);
+
+        }
+
+        util.inherits(Dispatcher, events.EventEmitter);
+
+        Dispatcher.prototype.listen = function() {
+            var defer = Q.defer();
+            server.listen(this.port, defer.makeNodeResolver());
+            return defer.promise;
+        };
+
+        Dispatcher.prototype.listPendingCommands = function(agentId) {
+            return _.query(pendingCommands, {agentId:agentId, status: &#x27;PENDING&#x27;});
+        };
+
+        Dispatcher.prototype.executeOnAgent = function(agentId, commandKey, payload) {
+            var defer = Q.defer();
+
+            Q.nextTick(_.bind(function() {
+
+                var cmdId = shortId.generate();
+                var ts = moment().utc().unix();
+
+                this.db.multi()
+                    .hset(cmdId, &quot;id&quot;, cmdId)
+                    .hset(cmdId, &quot;key&quot;, commandKey)
+                    .hset(cmdId, &quot;agent&quot;, agentId)
+                    .hset(cmdId, &quot;ts&quot;, ts)
+                    .hset(cmdId, &quot;payload&quot;, JSON.stringify(payload))
+                    .exec(function(err) {
+                        if(err) defer.reject(err);
+                        else {
+                            // Add this command to our pending list
+                            pendingCommands.push({
+                                id:cmdId,
+                                agentId: agentId,
+                                defer:defer,
+                                status: &#x27;PENDING&#x27;,
+                                ts: ts
+                            });
+
+                        }
+                    });
+
+            }, this));
+
+            return defer.promise;
+        };
+
+        /**
+         * @method emitTo Emit an event to a specific agent only.
+         * @param agentId The agent where the event is to be sent. This may be an array of agentIds.
+         * @param key The event key that is being sent
+         * @param data The event payload
+         * @returns {*} A promise resolved when the event has been retrieved by the agent (or agents)
+         */
+        Dispatcher.prototype.emitTo = function(agentId, key, data) {
+            var _this = this;
+            var defer = Q.defer();
+            Q.nextTick(function() {
+                if(_.isString(agentId)) agentId = [agentId];
+                _.each(agentId, function(id) {
+                    _this.db.rpush(id+&quot;_events&quot;, JSON.stringify({key: key, data:data}));
+                });
+            });
+            return defer.promise;
+        };
+
+        Dispatcher.prototype.applyCommandResponse = function(cmdId, result) {
+            var defer = Q.defer();
+            Q.nextTick(function() {
+                var commands = _.query(pendingCommands, {id:cmdId});
+                if(commands.length == 1) {
+                    commands[0].defer.resolve(result);
+                    commands[0].status = &#x27;COMPLETE&#x27;;
+                    defer.resolve({success:true});
+                }
+                else {
+                    defer.reject({success:false, error:&quot;Unknown command:&quot;+cmdId});
+                }
+            });
+
+            return defer.promise;
+        };
+
+        Dispatcher.prototype.applyCommandError = function(cmdId, error) {
+            var defer = Q.defer();
+            Q.nextTick(function() {
+                var commands = _.query(pendingCommands, {id:cmdId});
+                if(commands.length == 1) {
+                    commands[0].defer.reject(error);
+                    commands[0].status = &#x27;COMPLETE&#x27;;
+                    defer.resolve({success:true});
+                }
+                else {
+                    defer.reject({success:false, error: &quot;Unknown command:&quot;+cmdId});
+                }
+            });
+
+            return defer.promise;
+        };
+
+        Dispatcher.prototype.startAgentWatchDog = function(agent) {
+            var _this = this;
+            var defer = Q.defer();
+
+            Q.nextTick(function() {
+                watchDogs[agent.id] = new WatchDog(agent, _this);
+                _this.log.debug(&quot;Watchdog installed for agent %s&quot;, agent.id);
+                defer.resolve(watchDogs[agent.id]);
+            });
+
+            return defer.promise;
+        };
+
+        Dispatcher.prototype.stopAgentWatchDog = function(agentId) {
+            clearInterval(watchDogs[agentId]);
+        };
+
+        Dispatcher.prototype.ensureWatchDog = function(agent){
+            if(!watchDogs[agent.id]) {
+                return this.startAgentWatchDog(agent);
+            }
+            return Q.when(watchDogs[agent.id]);
+        };
+
+        Dispatcher.prototype.hasWatchDog = function(agentId) {
+            return !_.isUndefined(watchDogs[agentId]);
+        };
+
+        return Dispatcher;
+    })();
+
+    module.exports = Dispatcher;
+
+})();
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>

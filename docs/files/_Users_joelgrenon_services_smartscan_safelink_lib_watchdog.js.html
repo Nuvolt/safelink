@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js - Safelink</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap-responsive.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+        
+	    <img alt="Safelink" src="../assets/css/logo.png" style="max-height: 65%;" title="Safelink">
+        
+            Safelink
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.3.6</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+	    <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-tabs" style="margin-bottom:0;">
+            <li class="active"><a href="#classes" data-toggle="tab">Classes</a></li>
+            <li><a href="#modules" data-toggle="tab">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" placeholder="Type to filter APIs">
+        </div>
+
+        <div class="tab-content" style="border: 1px solid #DDD; border-top:0;">
+            <div class="tab-pane active" id="classes">
+                <ul id="api-classes" class="nav nav-list">
+                    
+                        <li><a href="../classes/Agent.html">Agent</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="tab-pane" id="modules">
+                <ul id="api-modules" class="nav nav-list">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        <div class="span9">
+                <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+/**
+ *
+ * Copyright 2013 Joel Grenon
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+(function() {
+    var moment = require(&#x27;moment&#x27;);
+
+    WatchDog = (function(){
+
+        function WatchDog(agent, dispatcher) {
+            var _this = this;
+
+            var interval = agent.interval || 30;
+
+            dispatcher.log.debug(&quot;Installing agent %s watchdog at an interval of %d seconds&quot;, agent.id, interval * 2);
+
+            this.watchDogInterval = setInterval(function(){
+                dispatcher.log.debug(&quot;Executing watchdog check for agent &quot;, agent.id);
+
+                dispatcher.db.multi()
+                    .hget(agent.id, &quot;lastHeartbeatTs&quot;)
+                    .hget(agent.id, &quot;status&quot;)
+                    .exec(function(err, results) {
+                        dispatcher.log.trace(results, &quot;Agent %s current state&quot;, agent.id);
+
+                        try {
+                            var delta = moment().utc().unix() - moment(parseInt(results[0]) * 1000).utc().unix() + 5;
+                        }
+                        catch(err) {
+                            delta = 0;
+                        }
+
+                        dispatcher.log.debug(&quot;%d seconds since last heartbeat for agent %s&quot;, delta, agent.id);
+
+                        // If we haven&#x27;t received a heartbeat for twice the time, it means our agent is probably dead...
+                        if(delta &gt; interval * 2 ) {
+                            dispatcher.db.hset(agent.id, &quot;status&quot;, &quot;DISCONNECTED&quot;);
+
+                            if(results[1] === &#x27;CONNECTED&#x27;) {
+                                dispatcher.log.warn(&quot;Watchdog Report: Agent %s is disconnected. Last heartbeat we received was %d&quot;, agent.id, results[0]);
+                                dispatcher.emit(&#x27;agent-disconnected&#x27;, {id:agent.id, lastHeartbeatTs: results[0]});
+                            }
+
+                            // Close this watch dog, another one will be created when the agent is reconnected
+                            dispatcher.log.info(&quot;Removing watchdog for agent %s&quot;, agent.id);
+                            clearInterval(_this.watchDogInterval);
+                        }
+                        else {
+                            dispatcher.log.debug(&quot;Watchdog Report: Agent %s is still connected&quot;, agent.id);
+                        }
+                    });
+
+
+            }, interval * 2000);
+        }
+
+        return WatchDog;
+    })();
+
+    module.exports = WatchDog;
+})();
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>

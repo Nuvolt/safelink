@@ -1,0 +1,3 @@
+[submodule "vendors/yuidoc-bootstrap-theme"]
+	path = vendors/yuidoc-bootstrap-theme
+	url = git@github.com:kevinlacotaco/yuidoc-bootstrap-theme.git
