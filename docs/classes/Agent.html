@@ -24,12 +24,12 @@
             <li class="divider-vertical"></li>
             <li>
                 <p class="navbar-text">
-                    API Docs for Version: <b>0.3.6</b>
+                    API Docs for Version: <b>0.3.7</b>
                 </p>
             </li>
         </div>
         <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
-            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent"]'>
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent", "classes/Dispatcher"]'>
         </form>
     </div>
 </div>
@@ -53,6 +53,8 @@
                 <ul id="api-classes" class="nav nav-list">
                     
                         <li><a href="../classes/Agent.html">Agent</a></li>
+                    
+                        <li><a href="../classes/Dispatcher.html">Dispatcher</a></li>
                     
                 </ul>
             </div>
@@ -224,6 +226,8 @@
         
         
         
+            <li><a data-toggle="tab" href="#events">Events</a></li>
+        
     </ul>
 
     <div class="tab-content">
@@ -287,6 +291,35 @@
             
 
             
+                <div class="index-section events">
+                    <h3>Events</h3>
+
+                    <ul class="index-list events">
+                        
+                            <li class="index-item event">
+                                <a href="#" data-tabid="#events" data-anchor="#event_before-connect" data-tablink="before-connect">before-connect</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item event">
+                                <a href="#" data-tabid="#events" data-anchor="#event_connected" data-tablink="connected">connected</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item event">
+                                <a href="#" data-tabid="#events" data-anchor="#event_network-error" data-tablink="network-error">network-error</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
         </div>
 
         
@@ -325,7 +358,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"></span>
+            <span class="type">Promise</span>
         </span>
     
 
@@ -352,7 +385,7 @@
             
         
         
-        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l190"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:190</code></a>
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l206"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:206</code></a>
         
         </p>
 
@@ -363,7 +396,9 @@
     </div>
 
     <div class="description">
-        
+        <p>Send a notification to whomever is listening to. This is not directed to a specific agent, but to anyone
+ on the network, including the dispatcher.</p>
+
     </div>
 
     
@@ -375,13 +410,14 @@
                 <li class="param">
                     
                         <code class="param-name">event</code>
-                        <span class="type">Object</span>
+                        <span class="type">String</span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>The key identifying the event</p>
+
                     </div>
 
                     
@@ -396,7 +432,8 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>The event data</p>
+
                     </div>
 
                     
@@ -411,7 +448,8 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>Options modifying the behavior of the broadcast.</p>
+
                     </div>
 
                     
@@ -428,8 +466,10 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"></span>:
+                        <span class="type">Promise</span>:
                     
+                    <p>A promise resolved as soon as the event has been broadcasted. Nothing is returned (fire and forget)</p>
+
                 
             </div>
         </div>
@@ -514,7 +554,9 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>Supported options are :
+  - waitForDispatcher: Indicate if the agent will exit of retry connection with the dispatcher indefinitely. Default to false.</p>
+
                     </div>
 
                     
@@ -573,7 +615,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"></span>
+            <span class="type">Promise</span>
         </span>
     
 
@@ -600,7 +642,7 @@
             
         
         
-        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l227"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:227</code></a>
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l245"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:245</code></a>
         
         </p>
 
@@ -611,7 +653,9 @@
     </div>
 
     <div class="description">
-        
+        <p>Execute a remote command. Depending on the dispatcher context, the command might be executed by
+the dispatcher itself or by another agent, having registered a remote command handler with the dispacher.</p>
+
     </div>
 
     
@@ -629,7 +673,8 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>The key of the command to execute. It must be registered by the dispatcher or an agent somewhere to receive a response.</p>
+
                     </div>
 
                     
@@ -644,7 +689,8 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>The data to send with the command.</p>
+
                     </div>
 
                     
@@ -659,7 +705,11 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>Options that may change the way the command is executed. Supported options are:</p>
+<ul>
+<li><strong>timeout</strong> : The number of seconds to wait for a response. Default to 30 seconds.</li>
+</ul>
+
                     </div>
 
                     
@@ -676,8 +726,10 @@
             <div class="returns-description">
                 
                     
-                        <span class="type"></span>:
+                        <span class="type">Promise</span>:
                     
+                    <p>A promise for the command result.</p>
+
                 
             </div>
         </div>
@@ -735,7 +787,7 @@
             
         
         
-        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l265"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:265</code></a>
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l326"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:326</code></a>
         
         </p>
 
@@ -746,7 +798,8 @@
     </div>
 
     <div class="description">
-        
+        <p>Add or replace a command handler. This handler will be execute each time a command of type <strong>key</strong> will be received.</p>
+
     </div>
 
     
@@ -851,7 +904,7 @@
             
         
         
-        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l116"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:116</code></a>
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l127"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:127</code></a>
         
         </p>
 
@@ -862,7 +915,9 @@
     </div>
 
     <div class="description">
-        
+        <p>Will connect this agent with remote events emitted by the dispatcher. These events may be triggered by the dispatcher or other agents connected
+ on the network. For now, you can only subscribe to events that are sent to you, but in the future, we will add support for channels to receive &#39;room-like&#39; messages.</p>
+
     </div>
 
     
@@ -874,13 +929,14 @@
                 <li class="param">
                     
                         <code class="param-name">key</code>
-                        <span class="type">Object</span>
+                        <span class="type">String</span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>The event key we wish to subscribe to remotely</p>
+
                     </div>
 
                     
@@ -889,13 +945,14 @@
                 <li class="param">
                     
                         <code class="param-name">fn</code>
-                        <span class="type">Object</span>
+                        <span class="type">Function</span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>The handler that will be called when the event is triggered remotely</p>
+
                     </div>
 
                     
@@ -910,7 +967,12 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>Options modifying the behavior to the function.</p>
+<ul>
+<li><strong>force</strong> : Avoid reusing a subscription if already in place and
+send the request to the dispatcher anyway. This is used when the dispatcher just failed and we are instructed to reconnect our event handlers.</li>
+</ul>
+
                     </div>
 
                     
@@ -968,7 +1030,7 @@
             
         
         
-        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l159"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:159</code></a>
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l175"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:175</code></a>
         
         </p>
 
@@ -1020,6 +1082,209 @@
 
         
 
+        
+            <div id="events" class="tab-pane">
+                <h2 class="off-left">Events</h2>
+
+                
+                    <div id="event_before-connect" class="events item">
+    <h3 class="name"><code>before-connect</code></h3>
+    <span class="type"></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l66"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:66</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Fired before the agent is connected to the dispatcher.</p>
+
+    </div>
+
+    
+
+
+    
+</div>
+
+                
+                    <div id="event_connected" class="events item">
+    <h3 class="name"><code>connected</code></h3>
+    <span class="type"></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l87"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:87</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Fired when the dispatcher has been reached and accepted our initial connection request. The response
+ to the connect call is passed in parameter</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Event Payload:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">response</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The response of the connect call as sent by the dispatcher</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+
+    
+</div>
+
+                
+                    <div id="event_network-error" class="events item">
+    <h3 class="name"><code>network-error</code></h3>
+    <span class="type"></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_agent.js.html#l424"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;agent.js:424</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Emitted when there is a network problem and we were unable to communicate with the dispatcher.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Event Payload:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">action</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The name of the action that triggered the error</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">error</code>
+                        <span class="type">Error | String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The actual error that was thrown</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+
+    
+</div>
+
+                
+            </div>
         
     </div>
 </div>

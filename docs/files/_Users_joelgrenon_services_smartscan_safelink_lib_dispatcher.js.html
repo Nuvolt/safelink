@@ -24,12 +24,12 @@
             <li class="divider-vertical"></li>
             <li>
                 <p class="navbar-text">
-                    API Docs for Version: <b>0.3.6</b>
+                    API Docs for Version: <b>0.3.7</b>
                 </p>
             </li>
         </div>
         <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
-            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent"]'>
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent", "classes/Dispatcher"]'>
         </form>
     </div>
 </div>
@@ -53,6 +53,8 @@
                 <ul id="api-classes" class="nav nav-list">
                     
                         <li><a href="../classes/Agent.html">Agent</a></li>
+                    
+                        <li><a href="../classes/Dispatcher.html">Dispatcher</a></li>
                     
                 </ul>
             </div>
@@ -132,7 +134,7 @@
 
     require(&quot;underscore-query&quot;);
 
-    Dispatcher = (function(){
+    Dispatcher = (function()    {
 
         var server;
 
@@ -141,6 +143,14 @@
         const pendingCommands = [];
         const watchDogs = {};
 
+        /**
+         * @class Dispatcher
+         * @extend EventEmitter
+         * @description The dispatcher is responsible for central coordination of all agents. It monitors their liveness and make sure they can communication between one and other.
+         * The Dispatcher is an {EventEmitter} and will make sure events are remotely replicated between agents.
+         * @param cfg
+         * @constructor
+         */
         function Dispatcher(cfg) {
             var _this = this;
             this.port = cfg.port || 8080;
@@ -149,7 +159,14 @@
 
             this.db = redis.createClient(cfg.redis);
             this.db.on(&#x27;error&#x27;, _.bind(function(e) {
+
+                /**
+                 * @event internal.db.error
+                 * @description Triggered if the internal Redis database cannot be accessed.
+                 * @param e {Error} The error that has been sent.
+                 */
                 this.emit(&#x27;internal.db.error&#x27;, e);
+
             }, this));
 
             this.eventSubscriptions = [];
@@ -228,16 +245,41 @@
 
         util.inherits(Dispatcher, events.EventEmitter);
 
+        /**
+         * @method listen
+         * @description Connect the HTTP server to the configured port.
+         * @returns {Promise} Resolved when the dispatcher is ready to receive commands.
+         */
         Dispatcher.prototype.listen = function() {
             var defer = Q.defer();
             server.listen(this.port, defer.makeNodeResolver());
             return defer.promise;
         };
 
+        /**
+         * @method listPendingCommands
+         * @description List all pending commands for a specific agent
+         * @param agentId {String} An agentId
+         * @returns {Array} A list of pending commands. Each command has the following fields:
+         *
+         * - id
+         * - agentId
+         * - defer: The deferred result
+         * - status: the status of the command : PENDING | ACTIVE | COMPLETE
+         * - ts : The unix timestamp when this command was created
+         */
         Dispatcher.prototype.listPendingCommands = function(agentId) {
             return _.query(pendingCommands, {agentId:agentId, status: &#x27;PENDING&#x27;});
         };
 
+        /**
+         * @method executeOnAgent
+         * @description Execute a command on a specific agent
+         * @param agentId {String} The agentId where the command will be executed
+         * @param commandKey {String} The command key that identified this command
+         * @param payload {Object} The data that will be passed with the command
+         * @returns {Promise} A promise providing access to the command result when available.
+         */
         Dispatcher.prototype.executeOnAgent = function(agentId, commandKey, payload) {
             var defer = Q.defer();
 
@@ -273,20 +315,24 @@
         };
 
         /**
-         * @method emitTo Emit an event to a specific agent only.
-         * @param agentId The agent where the event is to be sent. This may be an array of agentIds.
-         * @param key The event key that is being sent
+         * @method emitTo
+         * @description Emit an event to a specific agent only.
+         * @param agentId {String|Array} The agent where the event is to be sent. This may be an array of agentIds.
+         * @param key {String} The event key that is being sent
          * @param data The event payload
-         * @returns {*} A promise resolved when the event has been retrieved by the agent (or agents)
+         * @param options
+         * @returns {Promise} A promise resolved when the event has been retrieved by the agent (or agents)
          */
-        Dispatcher.prototype.emitTo = function(agentId, key, data) {
+        Dispatcher.prototype.emitTo = function(agentId, key, data, options) {
             var _this = this;
             var defer = Q.defer();
+            options = options || {};
             Q.nextTick(function() {
                 if(_.isString(agentId)) agentId = [agentId];
                 _.each(agentId, function(id) {
                     _this.db.rpush(id+&quot;_events&quot;, JSON.stringify({key: key, data:data}));
                 });
+                defer.resolve();
             });
             return defer.promise;
         };

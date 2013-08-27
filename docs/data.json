@@ -2,7 +2,7 @@
     "project": {
         "name": "Safelink",
         "url": "https://github.com/jgrenon/safelink",
-        "version": "0.3.6",
+        "version": "0.3.7",
         "description": "SafeLink is an open-source NodeJS library created to maintain long-term communication between distant remote sites with varying network quality"
     },
     "files": {
@@ -22,6 +22,13 @@
         },
         "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js": {
             "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js": {
+            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js",
             "modules": {},
             "classes": {},
             "fors": {},
@@ -102,7 +109,9 @@
         "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js": {
             "name": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Dispatcher": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -155,6 +164,26 @@
                 }
             ],
             "is_constructor": 1
+        },
+        "Dispatcher": {
+            "name": "Dispatcher",
+            "shortname": "Dispatcher",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 41,
+            "extends": "EventEmitter",
+            "description": "The dispatcher is responsible for central coordination of all agents. It monitors their liveness and make sure they can communication between one and other.\nThe Dispatcher is an {EventEmitter} and will make sure events are remotely replicated between agents.",
+            "params": [
+                {
+                    "name": "cfg",
+                    "description": ""
+                }
+            ],
+            "is_constructor": 1
         }
     },
     "classitems": [
@@ -172,6 +201,12 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js",
+            "line": 1,
+            "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
@@ -261,7 +296,7 @@
             "params": [
                 {
                     "name": "options",
-                    "description": ""
+                    "description": "Supported options are :\n  - waitForDispatcher: Indicate if the agent will exit of retry connection with the dispatcher indefinitely. Default to false."
                 }
             ],
             "return": {
@@ -272,28 +307,53 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 116,
-            "itemtype": "method",
-            "name": "subscribeTo",
+            "line": 66,
+            "itemtype": "event",
+            "name": "before-connect",
+            "description": "Fired before the agent is connected to the dispatcher.",
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 87,
+            "itemtype": "event",
+            "name": "connected",
+            "description": "Fired when the dispatcher has been reached and accepted our initial connection request. The response\n to the connect call is passed in parameter",
             "params": [
                 {
-                    "name": "key",
-                    "description": ""
-                },
-                {
-                    "name": "fn",
-                    "description": ""
-                },
-                {
-                    "name": "options",
-                    "description": ""
+                    "name": "response",
+                    "description": "The response of the connect call as sent by the dispatcher"
                 }
             ],
             "class": "Agent"
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 159,
+            "line": 127,
+            "itemtype": "method",
+            "name": "subscribeTo",
+            "description": "Will connect this agent with remote events emitted by the dispatcher. These events may be triggered by the dispatcher or other agents connected\n on the network. For now, you can only subscribe to events that are sent to you, but in the future, we will add support for channels to receive 'room-like' messages.",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "The event key we wish to subscribe to remotely",
+                    "type": "String"
+                },
+                {
+                    "name": "fn",
+                    "description": "The handler that will be called when the event is triggered remotely",
+                    "type": "Function"
+                },
+                {
+                    "name": "options",
+                    "description": "Options modifying the behavior to the function.\n\n - **force** : Avoid reusing a subscription if already in place and\n send the request to the dispatcher anyway. This is used when the dispatcher just failed and we are instructed to reconnect our event handlers."
+                }
+            ],
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 175,
             "itemtype": "method",
             "name": "unsubscribeFrom",
             "params": [
@@ -306,59 +366,91 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 190,
+            "line": 206,
             "itemtype": "method",
             "name": "broadcast",
+            "description": "Send a notification to whomever is listening to. This is not directed to a specific agent, but to anyone\n on the network, including the dispatcher.",
             "params": [
                 {
                     "name": "event",
-                    "description": ""
+                    "description": "The key identifying the event",
+                    "type": "String"
                 },
                 {
                     "name": "payload",
-                    "description": ""
+                    "description": "The event data",
+                    "type": "Object"
                 },
                 {
                     "name": "options",
-                    "description": ""
+                    "description": "Options modifying the behavior of the broadcast."
                 }
             ],
             "return": {
-                "description": "",
-                "type": "*"
+                "description": "A promise resolved as soon as the event has been broadcasted. Nothing is returned (fire and forget)",
+                "type": "Promise"
             },
             "class": "Agent"
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 227,
+            "line": 245,
             "itemtype": "method",
             "name": "execute",
+            "description": "Execute a remote command. Depending on the dispatcher context, the command might be executed by\nthe dispatcher itself or by another agent, having registered a remote command handler with the dispacher.",
             "params": [
                 {
                     "name": "key",
-                    "description": ""
+                    "description": "The key of the command to execute. It must be registered by the dispatcher or an agent somewhere to receive a response."
                 },
                 {
                     "name": "payload",
-                    "description": ""
+                    "description": "The data to send with the command."
                 },
                 {
                     "name": "options",
-                    "description": ""
+                    "description": "Options that may change the way the command is executed. Supported options are:\n\n- **timeout** : The number of seconds to wait for a response. Default to 30 seconds."
                 }
             ],
             "return": {
-                "description": "",
-                "type": "*"
+                "description": "A promise for the command result.",
+                "type": "Promise"
             },
             "class": "Agent"
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 265,
+            "line": 288,
+            "params": [
+                {
+                    "name": "agentId",
+                    "description": "One or more agentIds that should receive this event.",
+                    "type": "String|Array"
+                },
+                {
+                    "name": "event",
+                    "description": "The key of the event to send",
+                    "type": "String"
+                },
+                {
+                    "name": "payload",
+                    "description": "Data that will be associated with this event.",
+                    "type": "Payload"
+                },
+                {
+                    "name": "options",
+                    "description": "Options that will affect the way the event is emitted",
+                    "type": "Object"
+                }
+            ],
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 326,
             "itemtype": "method",
             "name": "registerCommandHandler",
+            "description": "Add or replace a command handler. This handler will be execute each time a command of type **key** will be received.",
             "params": [
                 {
                     "name": "key",
@@ -372,35 +464,137 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 1,
-            "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "class": ""
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 424,
+            "itemtype": "event",
+            "name": "network-error",
+            "description": "Emitted when there is a network problem and we were unable to communicate with the dispatcher.",
+            "params": [
+                {
+                    "name": "action",
+                    "description": "The name of the action that triggered the error",
+                    "type": "String"
+                },
+                {
+                    "name": "error",
+                    "description": "The actual error that was thrown",
+                    "type": "Error|String"
+                }
+            ],
+            "class": "Agent"
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 172,
+            "line": 1,
+            "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 58,
+            "itemtype": "event",
+            "name": "internal.db.error",
+            "description": "Triggered if the internal Redis database cannot be accessed.",
+            "params": [
+                {
+                    "name": "e",
+                    "description": "The error that has been sent.",
+                    "type": "Error"
+                }
+            ],
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 143,
             "itemtype": "method",
-            "name": "emitTo Emit an event to a specific agent only.",
+            "name": "listen",
+            "description": "Connect the HTTP server to the configured port.",
+            "return": {
+                "description": "Resolved when the dispatcher is ready to receive commands.",
+                "type": "Promise"
+            },
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 154,
+            "itemtype": "method",
+            "name": "listPendingCommands",
+            "description": "List all pending commands for a specific agent",
             "params": [
                 {
                     "name": "agentId",
-                    "description": "The agent where the event is to be sent. This may be an array of agentIds."
+                    "description": "An agentId",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "A list of pending commands. Each command has the following fields:\n\n- id\n- agentId\n- defer: The deferred result\n- status: the status of the command : PENDING | ACTIVE | COMPLETE\n- ts : The unix timestamp when this command was created",
+                "type": "Array"
+            },
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 170,
+            "itemtype": "method",
+            "name": "executeOnAgent",
+            "description": "Execute a command on a specific agent",
+            "params": [
+                {
+                    "name": "agentId",
+                    "description": "The agentId where the command will be executed",
+                    "type": "String"
+                },
+                {
+                    "name": "commandKey",
+                    "description": "The command key that identified this command",
+                    "type": "String"
+                },
+                {
+                    "name": "payload",
+                    "description": "The data that will be passed with the command",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "A promise providing access to the command result when available.",
+                "type": "Promise"
+            },
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 212,
+            "itemtype": "method",
+            "name": "emitTo",
+            "description": "Emit an event to a specific agent only.",
+            "params": [
+                {
+                    "name": "agentId",
+                    "description": "The agent where the event is to be sent. This may be an array of agentIds.",
+                    "type": "String|Array"
                 },
                 {
                     "name": "key",
-                    "description": "The event key that is being sent"
+                    "description": "The event key that is being sent",
+                    "type": "String"
                 },
                 {
                     "name": "data",
                     "description": "The event payload"
+                },
+                {
+                    "name": "options",
+                    "description": ""
                 }
             ],
             "return": {
                 "description": "A promise resolved when the event has been retrieved by the agent (or agents)",
-                "type": "*"
+                "type": "Promise"
             },
-            "class": ""
+            "class": "Dispatcher"
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
@@ -435,15 +629,31 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:190"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:206"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:227"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:245"
+        },
+        {
+            "message": "replacing incorrect tag: extend with extends",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:41"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:172"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:143"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:154"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:170"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:212"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
@@ -456,6 +666,10 @@
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
@@ -500,6 +714,10 @@
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:1"
+        },
+        {
+            "message": "Missing item type",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:288"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",

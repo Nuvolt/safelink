@@ -1,12 +1,13 @@
 {
     "name": "Safelink",
     "url": "https://github.com/jgrenon/safelink",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "options": {
         "paths": ".",
         "outdir": "docs",
         "exclude": "docs,build",
         "themedir": "./vendors/yuidoc-bootstrap-theme",
-        "helpers": ["./vendors/yuidoc-bootstrap-theme/helpers/helpers.js"]
+        "helpers": ["./vendors/yuidoc-bootstrap-theme/helpers/helpers.js"],
+        "tabtospace": 4
     }
 }

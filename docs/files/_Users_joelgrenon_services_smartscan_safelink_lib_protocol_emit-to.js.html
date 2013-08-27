@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js - Safelink</title>
+    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -119,62 +119,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
-    var moment = require(&#x27;moment&#x27;);
+(function(){
+    var Q = require(&#x27;q&#x27;),
+        redis = require(&#x27;redis&#x27;),
+        _ = require(&#x27;underscore&#x27;),
+        moment = require(&#x27;moment&#x27;);
 
-    WatchDog = (function(){
+    module.exports = function(request) {
+        var _this = this;
+        this.log.trace(request, &quot;Handling emitTo command&quot;);
+        var defer = Q.defer();
+        Q.nextTick(function() {
 
-        function WatchDog(agent, dispatcher) {
-            var _this = this;
+            //TODO: Add channel support
 
-            var interval = agent.interval || 30;
+            _this.emitTo(request.agents, request.event, request.payload, request.options).then(defer).done();
+        });
 
-            dispatcher.log.debug(&quot;Installing agent %s watchdog at an interval of %d seconds&quot;, agent.id, interval * 2);
+        return defer.promise;
+    };
 
-            this.watchDogInterval = setInterval(function(){
-                dispatcher.log.debug(&quot;Executing watchdog check for agent &quot;, agent.id);
-
-                dispatcher.db.multi()
-                    .hget(agent.id, &quot;lastHeartbeatTs&quot;)
-                    .hget(agent.id, &quot;status&quot;)
-                    .exec(function(err, results) {
-                        dispatcher.log.trace(results, &quot;Agent %s current state&quot;, agent.id);
-
-                        try {
-                            var delta = moment().utc().unix() - moment(parseInt(results[0]) * 1000).utc().unix() + 5;
-                        }
-                        catch(err) {
-                            delta = 0;
-                        }
-
-                        dispatcher.log.debug(&quot;%d seconds since last heartbeat for agent %s&quot;, delta, agent.id);
-
-                        // If we haven&#x27;t received a heartbeat for twice the time, it means our agent is probably dead...
-                        if(delta &gt; interval * 2 ) {
-                            dispatcher.db.hset(agent.id, &quot;status&quot;, &quot;DISCONNECTED&quot;);
-
-                            if(results[1] === &#x27;CONNECTED&#x27;) {
-                                dispatcher.log.warn(&quot;Watchdog Report: Agent %s is disconnected. Last heartbeat we received was %d&quot;, agent.id, results[0]);
-                                dispatcher.emit(&#x27;agent-disconnected&#x27;, {id:agent.id, lastHeartbeatTs: results[0]});
-                            }
-
-                            // Close this watch dog, another one will be created when the agent is reconnected
-                            dispatcher.log.info(&quot;Removing watchdog for agent %s&quot;, agent.id);
-                            clearInterval(_this.watchDogInterval);
-                        }
-                        else {
-                            dispatcher.log.debug(&quot;Watchdog Report: Agent %s is still connected&quot;, agent.id);
-                        }
-                    });
-
-
-            }, interval * 2000);
-        }
-
-        return WatchDog;
-    })();
-
-    module.exports = WatchDog;
 })();
 
     </pre>
