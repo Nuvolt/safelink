@@ -34,6 +34,13 @@
             "fors": {},
             "namespaces": {}
         },
+        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js": {
+            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
         "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js": {
             "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js",
             "modules": {},
@@ -236,6 +243,12 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js",
+            "line": 1,
+            "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
@@ -450,6 +463,32 @@
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
             "line": 288,
+            "itemtype": "method",
+            "name": "executeOn",
+            "description": "Execute a remote command on a specific agent. The command will be forward directly to this agent.",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "The key of the command to execute. It must be registered by the dispatcher or an agent somewhere to receive a response."
+                },
+                {
+                    "name": "payload",
+                    "description": "The data to send with the command."
+                },
+                {
+                    "name": "options",
+                    "description": "Options that may change the way the command is executed. Supported options are:\n\n- **timeout** : The number of seconds to wait for a response. Default to 30 seconds."
+                }
+            ],
+            "return": {
+                "description": "A promise for the command result.",
+                "type": "Promise"
+            },
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 331,
             "params": [
                 {
                     "name": "agentId",
@@ -476,7 +515,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 326,
+            "line": 369,
             "itemtype": "method",
             "name": "registerCommandHandler",
             "description": "Add or replace a command handler. This handler will be execute each time a command of type **key** will be received.",
@@ -494,7 +533,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 424,
+            "line": 467,
             "itemtype": "event",
             "name": "network-error",
             "description": "Emitted when there is a network problem and we were unable to communicate with the dispatcher.",
@@ -514,7 +553,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 518,
+            "line": 561,
             "itemtype": "method",
             "name": "dispatch",
             "access": "private",
@@ -698,7 +737,11 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:518"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:288"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:561"
         },
         {
             "message": "replacing incorrect tag: extend with extends",
@@ -735,6 +778,10 @@
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
@@ -782,7 +829,7 @@
         },
         {
             "message": "Missing item type",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:288"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:331"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",

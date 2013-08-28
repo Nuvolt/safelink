@@ -391,6 +391,49 @@
         };
 
         /**
+         * @method executeOn
+         * @description Execute a remote command on a specific agent. The command will be forward directly to this agent.
+         * @param key The key of the command to execute. It must be registered by the dispatcher or an agent somewhere to receive a response.
+         * @param payload The data to send with the command.
+         * @param options Options that may change the way the command is executed. Supported options are:
+         *
+         * - **timeout** : The number of seconds to wait for a response. Default to 30 seconds.
+         *
+         * @returns {Promise} A promise for the command result.
+         */
+        Agent.prototype.executeOn = function(agentId, key, payload, options) {
+            var _this = this;
+            var defer = Q.defer();
+
+            Q.nextTick(function(){
+
+                dispatch(_this, &#x27;execute-command-on&#x27;, {
+                    agentId: agentId,
+                    commandKey:key,
+                    payload:payload,
+                    options:options||{}
+                }, function(err, resp, body) {
+                    if(err) {
+                        defer.reject({success:false, error:err});
+                    }
+                    else if(resp &amp;&amp; resp.statusCode &gt;= 400) {
+                        defer.reject({
+                            success:false,
+                            error:&#x27;HTTP-ERROR&#x27;,
+                            status:resp.statusCode
+                        });
+                    }
+                    else {
+                        defer.resolve(body);
+                    }
+                });
+
+            });
+
+            return defer.promise;
+        };
+
+        /**
          *
          * @param agentId {String|Array} One or more agentIds that should receive this event.
          * @param event {String} The key of the event to send
