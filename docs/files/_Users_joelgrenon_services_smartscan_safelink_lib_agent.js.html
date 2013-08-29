@@ -229,6 +229,10 @@
             return defer.promise;
         };
 
+        Agent.prototype.disconnect = function() {
+            return dispatch(this, &#x27;agent-disconnect&#x27;);
+        };
+
         /**
          * @method subscribeTo
          * @description Will connect this agent with remote events emitted by the dispatcher. These events may be triggered by the dispatcher or other agents connected

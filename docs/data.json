@@ -371,7 +371,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 127,
+            "line": 131,
             "itemtype": "method",
             "name": "subscribeTo",
             "description": "Will connect this agent with remote events emitted by the dispatcher. These events may be triggered by the dispatcher or other agents connected\n on the network. For now, you can only subscribe to events that are sent to you, but in the future, we will add support for channels to receive 'room-like' messages.",
@@ -395,7 +395,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 175,
+            "line": 179,
             "itemtype": "method",
             "name": "unsubscribeFrom",
             "params": [
@@ -408,7 +408,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 206,
+            "line": 210,
             "itemtype": "method",
             "name": "broadcast",
             "description": "Send a notification to whomever is listening to. This is not directed to a specific agent, but to anyone\n on the network, including the dispatcher.",
@@ -436,7 +436,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 245,
+            "line": 249,
             "itemtype": "method",
             "name": "execute",
             "description": "Execute a remote command. Depending on the dispatcher context, the command might be executed by\nthe dispatcher itself or by another agent, having registered a remote command handler with the dispacher.",
@@ -462,7 +462,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 288,
+            "line": 292,
             "itemtype": "method",
             "name": "executeOn",
             "description": "Execute a remote command on a specific agent. The command will be forward directly to this agent.",
@@ -488,7 +488,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 331,
+            "line": 335,
             "params": [
                 {
                     "name": "agentId",
@@ -515,7 +515,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 369,
+            "line": 373,
             "itemtype": "method",
             "name": "registerCommandHandler",
             "description": "Add or replace a command handler. This handler will be execute each time a command of type **key** will be received.",
@@ -533,7 +533,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 467,
+            "line": 471,
             "itemtype": "event",
             "name": "network-error",
             "description": "Emitted when there is a network problem and we were unable to communicate with the dispatcher.",
@@ -553,7 +553,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 561,
+            "line": 565,
             "itemtype": "method",
             "name": "dispatch",
             "access": "private",
@@ -729,19 +729,19 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:206"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:210"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:245"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:249"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:288"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:292"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:561"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:565"
         },
         {
             "message": "replacing incorrect tag: extend with extends",
@@ -829,7 +829,7 @@
         },
         {
             "message": "Missing item type",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:331"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:335"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
