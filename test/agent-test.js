@@ -1,7 +1,7 @@
 (function(){
 
     var Agent = require("../index").Agent,
-        _ = require('underscore'),
+        _ = require('lodash'),
         bunyan = require('bunyan'),
         moment = require('moment');
 
