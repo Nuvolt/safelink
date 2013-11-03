@@ -119,47 +119,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        shortid = require(&#x27;shortid&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    shortid = require(&#x27;shortid&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.trace(request, &quot;Handling execute-command command&quot;);
-        var defer = Q.defer().timeout(25000);
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling execute-command command&quot;);
+    var defer = Q.defer().timeout(25000);
 
-        Q.nextTick(function() {
-            var id = shortid.generate();
-            var cmd = _.extend(request, {$id:id});
+    Q.nextTick(function() {
+        var id = shortid.generate();
+        var cmd = _.extend(request, {$id:id});
 
-            // First try built-in commands
-            var commandHandler = _this.commandHandlers[request.commandKey];
-            if(commandHandler) {
-                commandHandler.call(_this, cmd).then(function(result){
-                    defer.resolve(result);
-                }, function(err) {
-                    defer.reject(err);
-                });
-            }
-            else {
-                _this.once(&#x27;command-result-&#x27;+id, function(result) {
-                    defer.resolve(result);
-                });
-                // First try a direct handler
-                _this.emit(&#x27;execute-&#x27;+cmd.commandKey, cmd);
-                // Trigger the generic handler
-                _this.emit(&#x27;execute-command&#x27;, cmd);
-            }
+        // First try built-in commands
+        var commandHandler = _this.commandHandlers[request.commandKey];
+        if(commandHandler) {
+            commandHandler.call(_this, cmd).then(function(result){
+                defer.resolve(result);
+            }, function(err) {
+                defer.reject(err);
+            });
+        }
+        else {
+            _this.once(&#x27;command-result-&#x27;+id, function(result) {
+                defer.resolve(result);
+            });
+            // First try a direct handler
+            _this.emit(&#x27;execute-&#x27;+cmd.commandKey, cmd);
+            // Trigger the generic handler
+            _this.emit(&#x27;execute-command&#x27;, cmd);
+        }
 
-        });
+    });
 
-        return defer.promise;
-    };
-
-})();
+    return defer.promise;
+};
 
     </pre>
 </div>

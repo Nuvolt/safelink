@@ -246,6 +246,13 @@ The Dispatcher is an {EventEmitter} and will make sure events are remotely repli
                     <ul class="index-list methods extends">
                         
                             <li class="index-item method">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_applyCommandResponse" data-tablink="applyCommandResponse">applyCommandResponse</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#" data-tabid="#methods" data-anchor="#method_emitTo" data-tablink="emitTo">emitTo</a>
 
                                 
@@ -302,6 +309,136 @@ The Dispatcher is an {EventEmitter} and will make sure events are remotely repli
         
             <div id="methods" class="tab-pane">
                 <h2 class="off-left">Methods</h2>
+
+                
+                    <div id="method_applyCommandResponse" class="method item">
+    <h3 class="name"><code>applyCommandResponse</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>cmdId</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>result</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">defer.promise | </span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_dispatcher.js.html#l246"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;dispatcher.js:246</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Called when an agent has sent back the response to an active command. This will apply the response and resolve the
+associated promise.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">cmdId</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The id of the command associated with the response</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">result</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The actual command response</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">defer.promise | </span>:
+                    
+                    <p>The promise associated with the applyCommand operation and not the promise associated with the command itself.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
 
                 
                     <div id="method_emitTo" class="method item">
@@ -368,7 +505,7 @@ The Dispatcher is an {EventEmitter} and will make sure events are remotely repli
             
         
         
-        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_dispatcher.js.html#l212"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;dispatcher.js:212</code></a>
+        <a href="../files/_Users_joelgrenon_services_smartscan_safelink_lib_dispatcher.js.html#l220"><code>&#x2F;Users&#x2F;joelgrenon&#x2F;services&#x2F;smartscan&#x2F;safelink&#x2F;lib&#x2F;dispatcher.js:220</code></a>
         
         </p>
 

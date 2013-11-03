@@ -303,7 +303,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js",
-            "line": 55,
+            "line": 54,
             "description": "Abstract an agent subscription for various custom events. Each event will be broadcast to the agent\nas they are received by the dispatcher through the standard emit method.",
             "params": [
                 {
@@ -533,7 +533,25 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 471,
+            "line": 385,
+            "itemtype": "method",
+            "name": "retrieveCommands",
+            "description": "Force the retrieval of any pending commands from the dispatcher.",
+            "params": [
+                {
+                    "name": "options!~YUIDOC_LINE~!!~YUIDOC_LINE~!+",
+                    "description": "delay: Indicate how much time we should wait before retrieving the commands. Default is 0."
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 404,
             "itemtype": "event",
             "name": "network-error",
             "description": "Emitted when there is a network problem and we were unable to communicate with the dispatcher.",
@@ -553,7 +571,25 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 565,
+            "line": 456,
+            "itemtype": "method",
+            "name": "retrieveEvents",
+            "description": "Retrieve all pending events for this agent.",
+            "params": [
+                {
+                    "name": "options!~YUIDOC_LINE~!!~YUIDOC_LINE~!-",
+                    "description": "delay: The number of seconds we have to wait before retrieving the events. Default to 0."
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "line": 630,
             "itemtype": "method",
             "name": "dispatch",
             "access": "private",
@@ -666,7 +702,7 @@
         },
         {
             "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 212,
+            "line": 220,
             "itemtype": "method",
             "name": "emitTo",
             "description": "Emit an event to a specific agent only.",
@@ -693,6 +729,28 @@
             "return": {
                 "description": "A promise resolved when the event has been retrieved by the agent (or agents)",
                 "type": "Promise"
+            },
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "line": 246,
+            "itemtype": "method",
+            "name": "applyCommandResponse",
+            "description": "Called when an agent has sent back the response to an active command. This will apply the response and resolve the\nassociated promise.",
+            "params": [
+                {
+                    "name": "cmdId",
+                    "description": "The id of the command associated with the response"
+                },
+                {
+                    "name": "result",
+                    "description": "The actual command response"
+                }
+            ],
+            "return": {
+                "description": "The promise associated with the applyCommand operation and not the promise associated with the command itself.",
+                "type": "defer.promise|*"
             },
             "class": "Dispatcher"
         },
@@ -741,7 +799,15 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:565"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:385"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:456"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:630"
         },
         {
             "message": "replacing incorrect tag: extend with extends",
@@ -761,7 +827,11 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:212"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:220"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:246"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
@@ -817,7 +887,7 @@
         },
         {
             "message": "Missing item type\nAbstract an agent subscription for various custom events. Each event will be broadcast to the agent\nas they are received by the dispatcher through the standard emit method.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js:55"
+            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js:54"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",

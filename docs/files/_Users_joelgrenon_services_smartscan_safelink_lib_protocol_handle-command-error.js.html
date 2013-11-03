@@ -119,24 +119,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        async = require(&#x27;async&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.debug(request, &quot;Handling command-error command&quot;);
-        var defer = Q.defer();
-        Q.nextTick(function() {
-            _this.applyCommandError(request.commandId, {type:request.type, error:request.error}).then(defer);
-        });
-        return defer.promise;
-    }
-
-})();
+module.exports = function(request) {
+    var _this = this;
+    this.log.debug(request, &quot;Handling command-error command&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
+        _this.applyCommandError(request.commandId, {type:request.type, error:request.error}).then(defer);
+    });
+    return defer.promise;
+}
 
     </pre>
 </div>

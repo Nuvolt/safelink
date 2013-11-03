@@ -123,7 +123,7 @@
     var util = require(&#x27;util&#x27;),
         request = require(&#x27;request&#x27;),
         Q = require(&#x27;q&#x27;),
-        _ = require(&#x27;underscore&#x27;),
+        _ = require(&#x27;lodash&#x27;),
         bunyan = require(&#x27;bunyan&#x27;),
         events = require(&#x27;events&#x27;);
 
@@ -142,7 +142,7 @@
             this.version = cfg.version || 100;
             this.url = cfg.endpoint;
             this.timeout = cfg.timeout || 30;
-            this.log = cfg.log || bunyan.createLogger({name:&#x27;sitelink&#x27;, level:cfg.logLevel || &#x27;info&#x27;});
+            this.log = cfg.log || bunyan.createLogger({name:this.id, level:cfg.logLevel || &#x27;info&#x27;});
             this.heartbeatSpec = cfg.heartbeat || { interval: 30};
             this.pollingSpec = cfg.polling || { interval: 5 };
             this.commandHandlers = _.defaults(cfg.commandHandlers || {}, {
@@ -482,8 +482,149 @@
          * @param fn The handler that will be executed when a command of the specified key is received
          */
         Agent.prototype.registerCommandHandler = function(key, fn) {
+            this.log.debug(&quot;Register a new command handler %s&quot;, key);
             this.commandHandlers = this.commandHandlers || {};
             this.commandHandlers[key] = fn;
+        };
+
+        /**
+         * @method retrieveCommands
+         * @description Force the retrieval of any pending commands from the dispatcher.
+         * @param options
+         *
+         * + delay: Indicate how much time we should wait before retrieving the commands. Default is 0.
+         *
+         * @returns {*}
+         */
+        Agent.prototype.retrieveCommands = function(options) {
+            var defer = Q.defer();
+            options = options || {};
+
+            _.delay(_.bind(function() {
+
+                dispatch(this, &#x27;retrieve-pending-commands&#x27;, function(err, resp, result) {
+                    var _this = this;
+
+                    if(err) {
+                        /**
+                         * @event network-error
+                         * @description Emitted when there is a network problem and we were unable to communicate with the dispatcher.
+                         * @param action {String} The name of the action that triggered the error
+                         * @param error {Error|String} The actual error that was thrown
+                         */
+                        this.emit(&#x27;network-error&#x27;, {
+                            action:&#x27;retrieve-pending-commands&#x27;,
+                            error: err
+                        });
+
+                        defer.reject({success:false, error:err});
+                    }
+                    else {
+                        if(resp.statusCode === 200) {
+
+                            if(_.isArray(result.data)) {
+                                _this.log.debug(&quot;Received %d commands to execute&quot;, result.data.length);
+                                _.each(result.data, function(command) {
+                                    _this.log.trace(&quot;Executing command %s&quot;, command.key);
+                                    _this.emit(&#x27;command&#x27;, command);
+                                });
+                                defer.resolve({success:true, count:result.data.length});
+                            }
+                            else {
+                                this.emit(&#x27;network-error&#x27;, {
+                                    action:&#x27;retrieve-pending-commands&#x27;,
+                                    error: &quot;Invalid command list&quot;,
+                                    status: resp.statusCode,
+                                    body: resp.body
+                                });
+                                defer.reject({success:false, error:&#x27;invalid command list&#x27;, body:resp.body});
+                            }
+
+                        }
+                        else {
+                            this.emit(&#x27;network-error&#x27;, {
+                                action:&#x27;retrieve-pending-commands&#x27;,
+                                error: &quot;HTTP-ERROR&quot;,
+                                status: resp.statusCode
+                            });
+
+                            defer.reject({success:false, error:&#x27;HTTP-ERROR&#x27;, status:resp.statusCode});
+                        }
+                    }
+                });
+
+            }, this), options.delay * 1000 || 0);
+
+            return defer.promise;
+        };
+
+        /**
+         * @method retrieveEvents
+         * @description Retrieve all pending events for this agent.
+         * @param options
+         *
+         * - delay: The number of seconds we have to wait before retrieving the events. Default to 0.
+         * @returns {*}
+         */
+        Agent.prototype.retrieveEvents = function(options) {
+            var defer = Q.defer();
+            options = options || {};
+
+            _.delay(_.bind(function() {
+
+                dispatch(this, &#x27;retrieve-pending-events&#x27;, function(err, resp, result) {
+                    var _this = this;
+
+                    if(err) {
+                        this.emit(&#x27;network-error&#x27;, {
+                            action:&#x27;retrieve-pending-events&#x27;,
+                            error: err
+                        });
+                        defer.reject({success:false, error:err});
+                    }
+                    else {
+                        if(resp.statusCode === 200) {
+
+                            if(_.isArray(result.data)) {
+                                _this.log.debug(&quot;Received %d events to handle&quot;, result.data.length);
+                                _.each(result.data, function(e) {
+                                    _this.log.trace(e, &quot;Received event&quot;);
+
+                                    // Notify all registered event handlers
+                                    //FIXME: Why no use our emitter interface here?
+                                    var handlers = _.query(_this.eventHandlers, {key: e.key});
+                                    _.each(handlers, function(h) {
+                                        h.handler.call(h.scope || _this, e.data);
+                                    });
+
+                                });
+
+                                defer.resolve({success:true, count: result.data.length});
+                            }
+                            else {
+                                this.emit(&#x27;network-error&#x27;, {
+                                    action:&#x27;retrieve-pending-events&#x27;,
+                                    error: &quot;Invalid event list&quot;,
+                                    status: resp.statusCode,
+                                    body: resp.body
+                                });
+                                defer.reject({success:false, error:&#x27;Invalid event list&#x27;, status:resp.statusCode, body:resp.body});
+                            }
+                        }
+                        else {
+                            this.emit(&#x27;network-error&#x27;, {
+                                action:&#x27;retrieve-pending-events&#x27;,
+                                error: &quot;HTTP-ERROR&quot;,
+                                status: resp.statusCode
+                            });
+                            defer.reject({success:false, error:&#x27;HTTP-ERROR&#x27;, status:resp.statusCode});
+                        }
+                    }
+                });
+
+            }, this), options.delay * 1000 || 0);
+
+            return defer.promise;
         };
 
         function executeCommand(command) {
@@ -491,6 +632,7 @@
 
             // Make sure to parse the payload
             if(_.isString(command.payload)) {
+                _this.log.trace(&quot;Automatically converting string payload to object using JSON parse&quot;);
                 try {
                     command.payload = JSON.parse(command.payload);
                 }
@@ -499,15 +641,21 @@
                 }
             }
 
+            _this.log.debug(&quot;Looking for installed handle for command %s (%s)&quot;, command.id, command.key);
+
             var handler = this.commandHandlers[command.key];
             if(handler) {
                 var deferredResponse = Q.defer();
 
                 Q.nextTick(function() {
+                    _this.log.trace(&quot;Executing command handler&quot;, handler);
                     _.bind(handler, _this)(command, deferredResponse);
                 });
 
+                _this.log.trace(&quot;Waiting for command %s(%s) results for %s seconds&quot;, command.id, command.key, _this.timeout);
                 Q.timeout(deferredResponse.promise, _this.timeout * 1000).then(function(result) {
+                    _this.log.debug(&quot;Received command %s(%s) result&quot;, command.id, command.key);
+                    _this.log.trace(&quot;Command %s(%s) result = &quot;, command.id, command.key, result);
 
                     dispatch(_this, &quot;command-response&quot;, {
                         commandId: command.id,
@@ -515,6 +663,7 @@
                     });
 
                 }, function(err) {
+                    _this.log.error(&quot;Error while processing command %s (%s): &quot;, command.id, command.key, err);
                     dispatch(_this, &quot;command-error&quot;, {commandId: command.id, type: &#x27;timeout&#x27;, error: err});
                 });
 
@@ -526,7 +675,7 @@
 
         function heartbeat() {
             var _this = this;
-            this.log.info(&quot;Sending heartbeat to our dispatcher&quot;);
+            this.log.debug(&quot;Sending heartbeat to our dispatcher&quot;);
             var data;
 
             if(this.heartbeatSpec.payload) {
@@ -538,12 +687,12 @@
                         var defer = Q.defer();
                         Q.nextTick(function() {
                             _this.heartbeatSpec.payload.call(_this.heartbeatSpec.scope || _this, defer);
-                            Q.timeout(defer.promise, 10000).then(function(data) {
+                            Q.timeout(defer.promise, _this.heartbeatSpec.interval * 1000 || 30000).then(function(data) {
                                 _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
                                 dispatch(_this, &quot;heartbeat&quot;, {payload: data});
                             }, function(err) {
                                 // Send a late heartbeat without a payload
-                                _this.log.warn(err, &quot;Unable to produce heartbeat.&quot;);
+                                _this.log.warn(err, &quot;Unable to produce heartbeat payload.&quot;);
                                 dispatch(_this, &quot;heartbeat&quot;);
                             });
                         });
@@ -568,96 +717,12 @@
 
         function retrievePendingCommands() {
             this.log.trace(&quot;Retrieving pending commands&quot;);
-
-            dispatch(this, &#x27;retrieve-pending-commands&#x27;, function(err, resp, result) {
-                var _this = this;
-
-                if(err) {
-                    /**
-                     * @event network-error
-                     * @description Emitted when there is a network problem and we were unable to communicate with the dispatcher.
-                     * @param action {String} The name of the action that triggered the error
-                     * @param error {Error|String} The actual error that was thrown
-                     */
-                    this.emit(&#x27;network-error&#x27;, {
-                        action:&#x27;retrieve-pending-commands&#x27;,
-                        error: err
-                    });
-                }
-                else {
-                    if(resp.statusCode === 200) {
-                        if(_.isArray(result.data)) {
-                            _this.log.debug(&quot;Received %d commands to execute&quot;, result.data.length);
-                            _.each(result.data, function(command) {
-                                _this.emit(&#x27;command&#x27;, command);
-                            });
-                        }
-                        else {
-                            this.emit(&#x27;network-error&#x27;, {
-                                action:&#x27;retrieve-pending-commands&#x27;,
-                                error: &quot;Invalid command list&quot;,
-                                status: resp.statusCode,
-                                body: resp.body
-                            });
-                        }
-                    }
-                    else {
-                        this.emit(&#x27;network-error&#x27;, {
-                            action:&#x27;retrieve-pending-commands&#x27;,
-                            error: &quot;HTTP-ERROR&quot;,
-                            status: resp.statusCode
-                        });
-                    }
-                }
-            });
+            this.retrieveCommands();
         }
 
         function retrievePendingEvents() {
             this.log.trace(&quot;Retrieving pending events&quot;);
-
-            dispatch(this, &#x27;retrieve-pending-events&#x27;, function(err, resp, result) {
-                var _this = this;
-
-                if(err) {
-                    this.emit(&#x27;network-error&#x27;, {
-                        action:&#x27;retrieve-pending-events&#x27;,
-                        error: err
-                    });
-                }
-                else {
-                    if(resp.statusCode === 200) {
-                        if(_.isArray(result.data)) {
-                            _this.log.debug(&quot;Received %d events to handle&quot;, result.data.length);
-                            _.each(result.data, function(e) {
-                                _this.log.trace(e, &quot;Received event&quot;);
-
-                                // Notify all registered event handlers
-                                //FIXME: Why no use our emitter interface here?
-                                var handlers = _.query(_this.eventHandlers, {key: e.key});
-                                _.each(handlers, function(h) {
-                                    h.handler.call(h.scope || _this, e.data);
-                                });
-
-                            });
-                        }
-                        else {
-                            this.emit(&#x27;network-error&#x27;, {
-                                action:&#x27;retrieve-pending-events&#x27;,
-                                error: &quot;Invalid event list&quot;,
-                                status: resp.statusCode,
-                                body: resp.body
-                            });
-                        }
-                    }
-                    else {
-                        this.emit(&#x27;network-error&#x27;, {
-                            action:&#x27;retrieve-pending-events&#x27;,
-                            error: &quot;HTTP-ERROR&quot;,
-                            status: resp.statusCode
-                        });
-                    }
-                }
-            });
+            this.retrieveEvents();
         }
 
         function simpleCommandHandler(dispatcher, key) {
@@ -694,7 +759,6 @@
                 json:true,
                 timeout:agent.timeout * 1000
             }, function(err, resp, body) {
-
                 if(callback) {
                     _.bind(callback, agent)(err, resp, body);
                 }

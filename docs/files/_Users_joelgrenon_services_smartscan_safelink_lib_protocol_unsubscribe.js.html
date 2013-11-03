@@ -119,43 +119,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        async = require(&#x27;async&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    require(&#x27;underscore-query&#x27;);
+require(&#x27;underscore-query&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.trace(request, &quot;Handling unsubscribe command&quot;);
-        var defer = Q.defer();
-        Q.nextTick(function() {
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling unsubscribe command&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
 
-            // Look for an existing subscription for this agent
-            var subscription = _.query.build( _this.eventSubscriptions ).and({&quot;agentId&quot;:request.id}).first();
-            if(subscription) {
-                // Remove the specified local listener for this event
-                _this.removeListener(request.event, subscription.listener(request));
+        // Look for an existing subscription for this agent
+        var subscription = _.query.build( _this.eventSubscriptions ).and({&quot;agentId&quot;:request.id}).first();
+        if(subscription) {
+            // Remove the specified local listener for this event
+            _this.removeListener(request.event, subscription.listener(request));
 
-                subscription.events.remove(request.event);
-                if(subscription.events.length === 0)
-                    _this.eventSubscriptions.remove(subscription);
+            subscription.events.remove(request.event);
+            if(subscription.events.length === 0)
+                _this.eventSubscriptions.remove(subscription);
 
-                _this.log.info(&quot;Agent successfully unsubscribed from event %d&quot;, request.event);
-            }
-            else
-                _this.log.warn(&quot;Tried to unsubscribe a missing subscription. Nothing was done&quot;);
+            _this.log.info(&quot;Agent successfully unsubscribed from event %d&quot;, request.event);
+        }
+        else
+            _this.log.warn(&quot;Tried to unsubscribe a missing subscription. Nothing was done&quot;);
 
-            defer.resolve({success:true});
-        });
+        defer.resolve({success:true});
+    });
 
-        return defer.promise;
-    };
-
-})();
+    return defer.promise;
+};
 
     </pre>
 </div>

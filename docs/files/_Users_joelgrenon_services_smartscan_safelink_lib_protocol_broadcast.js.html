@@ -119,31 +119,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.trace(request, &quot;Handling broadcast command&quot;);
-        var defer = Q.defer();
-        Q.nextTick(function() {
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling broadcast command&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
 
-            //TODO: Add channel support
+        //TODO: Add channel support
 
-            // Just emit this custom event to all our listeners, including custom event listeners registered through
-            // subscriptions. These events will eventually arrive at their destination as agent retrieve their events from the queue.
-            _this.emit(request.event, request.payload);
+        // Just emit this custom event to all our listeners, including custom event listeners registered through
+        // subscriptions. These events will eventually arrive at their destination as agent retrieve their events from the queue.
+        _this.emit(request.event, _.extend(request.payload, { _replyTo: request.id}));
 
-            defer.resolve({success:true});
-        });
+        defer.resolve({success:true});
+    });
 
-        return defer.promise;
-    };
-
-})();
+    return defer.promise;
+};
 
     </pre>
 </div>

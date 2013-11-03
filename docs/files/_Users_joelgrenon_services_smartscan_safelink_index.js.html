@@ -119,25 +119,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
 
-    Array.prototype.remove = function() {
-        var what, a = arguments, L = a.length, ax;
-        while (L &amp;&amp; this.length) {
-            what = a[--L];
-            while ((ax = this.indexOf(what)) !== -1) {
-                this.splice(ax, 1);
-            }
-        }
-        return this;
-    };
+module.exports = {
+    Agent: require(&#x27;./lib/agent&#x27;),
+    Dispatcher: require(&#x27;./lib/dispatcher&#x27;)
+};
 
-    module.exports = {
-        Agent: require(&#x27;./lib/agent&#x27;),
-        Dispatcher: require(&#x27;./lib/dispatcher&#x27;)
-    };
-
-})();
     </pre>
 </div>
 

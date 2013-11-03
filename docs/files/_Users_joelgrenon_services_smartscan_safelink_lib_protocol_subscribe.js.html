@@ -119,66 +119,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        async = require(&#x27;async&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    require(&#x27;underscore-query&#x27;);
+require(&#x27;underscore-query&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.trace(request, &quot;Handling subscribe command&quot;);
-        var defer = Q.defer();
-        Q.nextTick(function() {
-            _this.log.debug(&quot;Subscribing agent %s to event %s&quot;, request.id, request.event);
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling subscribe command&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
+        _this.log.debug(&quot;Subscribing agent %s to event %s&quot;, request.id, request.event);
 
-            // Look for an existing subscription for this agent
-            var subscription = _.query.build( _this.eventSubscriptions ).and({&quot;agentId&quot;:request.id}).first();
-            if(!subscription) {
-                subscription = new EventSubscription(_this, request.id);
-                _this.eventSubscriptions.push(subscription);
-            }
+        // Look for an existing subscription for this agent
+        var subscription = _.query.build( _this.eventSubscriptions ).and({&quot;agentId&quot;:request.id}).first();
+        if(!subscription) {
+            subscription = new EventSubscription(_this, request.id);
+            _this.eventSubscriptions.push(subscription);
+        }
 
-            // Add a local handler to propagate these events to this subscription
-            if(! _.contains(subscription.events, request.event)) {
-                _this.on(request.event, subscription.listener(request));
-                subscription.events.push(request.event);
-                _this.log.debug(&quot;Subscription to event %s was successfully established for agent %s&quot;, request.event, request.id);
-            }
-            else
-                _this.log.warn(&quot;Subscription to event %s is already in place. It will be reused&quot;, request.event);
+        // Add a local handler to propagate these events to this subscription
+        if(! _.contains(subscription.events, request.event)) {
+            _this.on(request.event, subscription.listener(request));
+            subscription.events.push(request.event);
+            _this.log.debug(&quot;Subscription to event %s was successfully established for agent %s&quot;, request.event, request.id);
+        }
+        else
+            _this.log.warn(&quot;Subscription to event %s is already in place. It will be reused&quot;, request.event);
 
-            defer.resolve({success:true});
-        });
+        defer.resolve({success:true});
+    });
 
-        return defer.promise;
-    };
+    return defer.promise;
+};
 
-    /**
-     * Abstract an agent subscription for various custom events. Each event will be broadcast to the agent
-     * as they are received by the dispatcher through the standard emit method.
-     *
-     * @param dispatcher
-     * @param spec
-     * @constructor
-     */
-    var EventSubscription = function(dispatcher, agentId) {
-        this.events = [];
-        this.agentId = agentId;
+/**
+ * Abstract an agent subscription for various custom events. Each event will be broadcast to the agent
+ * as they are received by the dispatcher through the standard emit method.
+ *
+ * @param dispatcher
+ * @param spec
+ * @constructor
+ */
+var EventSubscription = function(dispatcher, agentId) {
+    this.events = [];
+    this.agentId = agentId;
 
-        this.listener = function(s) {
-            return function(e) {
-                // Append this event to our event list
-                dispatcher.emitTo(s.id, s.event, e);
-            };
+    this.listener = function(s) {
+        return function(e) {
+            // Append this event to our event list
+            dispatcher.emitTo(s.id, s.event, e);
         };
-
     };
 
-})();
+};
 
     </pre>
 </div>

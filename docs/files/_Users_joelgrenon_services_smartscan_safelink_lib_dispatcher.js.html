@@ -124,7 +124,7 @@
         http = require(&#x27;http&#x27;),
         Q = require(&#x27;q&#x27;),
         shortId = require(&#x27;shortid&#x27;),
-        _ = require(&#x27;underscore&#x27;),
+        _ = require(&#x27;lodash&#x27;),
         moment = require(&#x27;moment&#x27;),
         redis = require(&#x27;redis&#x27;),
         async = require(&#x27;async&#x27;),
@@ -281,12 +281,15 @@
          * @returns {Promise} A promise providing access to the command result when available.
          */
         Dispatcher.prototype.executeOnAgent = function(agentId, commandKey, payload) {
+            var _this = this;
             var defer = Q.defer();
 
             Q.nextTick(_.bind(function() {
-
                 var cmdId = shortId.generate();
                 var ts = moment().utc().unix();
+
+                this.log.debug(&quot;Executing command %s(%s) on agent %s&quot;, commandKey, cmdId, agentId);
+                this.log.trace(&quot;Executing command %s(%s) with payload&quot;, commandKey, cmdId, payload);
 
                 this.db.multi()
                     .hset(cmdId, &quot;id&quot;, cmdId)
@@ -295,8 +298,13 @@
                     .hset(cmdId, &quot;ts&quot;, ts)
                     .hset(cmdId, &quot;payload&quot;, JSON.stringify(payload))
                     .exec(function(err) {
-                        if(err) defer.reject(err);
+                        if(err) {
+                            _this.log.error(&quot;Unable to register command in Redis&quot;, err);
+                            defer.reject(err);
+                        }
                         else {
+                            _this.log.debug(&quot;Adding command %s(%s) to pending command list for agent %s&quot;, commandKey, cmdId, agentId);
+
                             // Add this command to our pending list
                             pendingCommands.push({
                                 id:cmdId,
@@ -329,14 +337,25 @@
             options = options || {};
             Q.nextTick(function() {
                 if(_.isString(agentId)) agentId = [agentId];
-                _.each(agentId, function(id) {
+                async.forEach(agentId, function(id, done){
                     _this.db.rpush(id+&quot;_events&quot;, JSON.stringify({key: key, data:data}));
+                }, function(err) {
+                    if(err) defer.reject(err);
+                    else
+                        defer.resolve();
                 });
-                defer.resolve();
             });
             return defer.promise;
         };
 
+        /**
+         * @method applyCommandResponse
+         * @description Called when an agent has sent back the response to an active command. This will apply the response and resolve the
+         * associated promise.
+         * @param cmdId The id of the command associated with the response
+         * @param result The actual command response
+         * @returns {defer.promise|*} The promise associated with the applyCommand operation and not the promise associated with the command itself.
+         */
         Dispatcher.prototype.applyCommandResponse = function(cmdId, result) {
             var defer = Q.defer();
             Q.nextTick(function() {

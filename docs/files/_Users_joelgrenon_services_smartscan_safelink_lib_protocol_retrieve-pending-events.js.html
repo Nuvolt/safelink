@@ -119,55 +119,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        async = require(&#x27;async&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.trace(request, &quot;Handling retrieve-pending-events&quot;);
-        var defer = Q.defer();
-        Q.nextTick(function() {
-            var events = [], event = &quot;DUMMY&quot;;
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling retrieve-pending-events&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
+        var events = [], event = &quot;DUMMY&quot;;
 
-            // Asynchronously loop through all available events, removing them from our queue
-            async.whilst(
-                function() { return event !== null; },
-                function(callback) {
-                    _this.db.lpop(request.id+&quot;_events&quot;, function(err, e) {
-                        if(err) callback(err);
-                        else {
-                            if(e) {
-                                _this.log.trace(e, &quot;Event found in queue&quot;);
-                                var parsedEvent = JSON.parse(e);
-                                events.push(parsedEvent);
-                            }
-                            else
-                                _this.log.trace(&quot;No more events for agent %s&quot;, request.id);
-
-                            event = e;
-                            callback();
-                        }
-                    });
-                },
-                function(err) {
-                    if(err) defer.reject(err);
+        // Asynchronously loop through all available events, removing them from our queue
+        async.whilst(
+            function() { return event !== null; },
+            function(callback) {
+                _this.db.lpop(request.id+&quot;_events&quot;, function(err, e) {
+                    if(err) callback(err);
                     else {
-                        _this.log.trace(&quot;Agent %s will receive %d events to handle&quot;, request.id, events.length);
-                        defer.resolve(events);
+                        if(e) {
+                            _this.log.trace(e, &quot;Event found in queue&quot;);
+                            var parsedEvent = JSON.parse(e);
+                            events.push(parsedEvent);
+                        }
+                        else
+                            _this.log.trace(&quot;No more events for agent %s&quot;, request.id);
+
+                        event = e;
+                        callback();
                     }
+                });
+            },
+            function(err) {
+                if(err) defer.reject(err);
+                else {
+                    _this.log.trace(&quot;Agent %s will receive %d events to handle&quot;, request.id, events.length);
+                    defer.resolve(events);
                 }
-            );
+            }
+        );
 
-        });
+    });
 
-        return defer.promise;
-    }
-
-})();
+    return defer.promise;
+}
 
     </pre>
 </div>

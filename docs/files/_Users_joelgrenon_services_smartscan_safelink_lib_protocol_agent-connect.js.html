@@ -119,50 +119,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        moment = require(&#x27;moment&#x27;),
-        _ = require(&#x27;underscore&#x27;);
+var Q = require(&#x27;q&#x27;),
+    moment = require(&#x27;moment&#x27;),
+    _ = require(&#x27;lodash&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        var defer = Q.defer();
+module.exports = function(request) {
+    var _this = this;
+    var defer = Q.defer();
 
-        Q.nextTick(_.bind(function() {
-            this.log.info(request, &quot;Received connection request for agent %s&quot;, request.id);
+    Q.nextTick(_.bind(function() {
+        this.log.info(request, &quot;Received connection request for agent %s&quot;, request.id);
 
-            // Create a new structure for this agent
-            this.db.multi()
-                .hset(request.id, &quot;connectedTs&quot;, moment().utc().unix())
-                .hset(request.id, &quot;lastHeartbeatTs&quot;, moment().utc().unix())
-                .hset(request.id, &quot;version&quot;, request.version)
-                .hset(request.id, &quot;heartbeat-interval&quot;, request.interval)
-                .exec(function(err) {
-                    if(err) defer.reject(err);
-                    else {
-                        _this.ensureWatchDog(request).then(function(watchdog) {
+        // Create a new structure for this agent
+        this.db.multi()
+            .hset(request.id, &quot;connectedTs&quot;, moment().utc().unix())
+            .hset(request.id, &quot;lastHeartbeatTs&quot;, moment().utc().unix())
+            .hset(request.id, &quot;version&quot;, request.version)
+            .hset(request.id, &quot;heartbeat-interval&quot;, request.interval)
+            .exec(function(err) {
+                if(err) defer.reject(err);
+                else {
+                    _this.ensureWatchDog(request).then(function(watchdog) {
 
-                            // Force the execution of a configure command on the agent
-                            _this.executeOnAgent(request.id, &#x27;configure&#x27;, {restart: false}).then(function() {
-                                _this.emit(&#x27;agent-connected&#x27;, request.id);
-                            }, function(err) {
-                                _this.log.error(err, &quot;Agent %s has thrown an error while configuring itself&quot;, request.id);
-                            });
-                            defer.resolve({success:true});
-
-                        }, function(err){
-                            _this.log.warn(&quot;Unable to install watchdog for agent %s. Error = &quot;, request.id, err);
-                            defer.reject({success:false, error:err});
+                        // Force the execution of a configure command on the agent
+                        _this.executeOnAgent(request.id, &#x27;configure&#x27;, {restart: false}).then(function() {
+                            _this.emit(&#x27;agent-connected&#x27;, request.id);
+                        }, function(err) {
+                            _this.log.error(err, &quot;Agent %s has thrown an error while configuring itself&quot;, request.id);
                         });
-                    }
-                });
+                        defer.resolve({success:true});
 
-        }, this));
+                    }, function(err){
+                        _this.log.warn(&quot;Unable to install watchdog for agent %s. Error = &quot;, request.id, err);
+                        defer.reject({success:false, error:err});
+                    });
+                }
+            });
 
-        return defer.promise;
-    }
+    }, this));
 
-})();
+    return defer.promise;
+}
 
     </pre>
 </div>

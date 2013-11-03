@@ -119,47 +119,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        async = require(&#x27;async&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
-        this.log.trace(request, &quot;Handling retrieve-pending-commands&quot;);
-        var defer = Q.defer();
-        Q.nextTick(function() {
-            var commands = [];
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling retrieve-pending-commands&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
+        var commands = [];
 
-            async.forEach(_this.listPendingCommands(request.id), function(cmd, callback) {
-                _this.db.multi()
-                    .hget(cmd.id, &quot;key&quot;)
-                    .hget(cmd.id, &quot;payload&quot;)
-                    .exec(function(err, results) {
-                        commands.push({
-                            id:cmd.id,
-                            key:results[0],
-                            payload: results[1],
-                            ts:cmd.ts
-                        });
-                        cmd.status = &#x27;ACTIVE&#x27;;
-                        callback();
+        async.forEach(_this.listPendingCommands(request.id), function(cmd, callback) {
+            _this.db.multi()
+                .hget(cmd.id, &quot;key&quot;)
+                .hget(cmd.id, &quot;payload&quot;)
+                .exec(function(err, results) {
+                    commands.push({
+                        id:cmd.id,
+                        key:results[0],
+                        payload: results[1],
+                        ts:cmd.ts
                     });
-            }, function(err) {
-                if(err) defer.reject(err);
-                else{
-                    _this.log.trace(&quot;Agent %s will receive %d commands to execute&quot;, request.id, commands.length);
-                    defer.resolve(commands);
-                }
-            });
-
+                    cmd.status = &#x27;ACTIVE&#x27;;
+                    callback();
+                });
+        }, function(err) {
+            if(err) defer.reject(err);
+            else{
+                _this.log.trace(&quot;Agent %s will receive %d commands to execute&quot;, request.id, commands.length);
+                defer.resolve(commands);
+            }
         });
-        return defer.promise;
-    }
 
-})();
+    });
+    return defer.promise;
+}
 
     </pre>
 </div>

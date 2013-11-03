@@ -119,72 +119,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
-    var Q = require(&#x27;q&#x27;),
-        redis = require(&#x27;redis&#x27;),
-        _ = require(&#x27;underscore&#x27;),
-        moment = require(&#x27;moment&#x27;);
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-    module.exports = function(request) {
-        var _this = this;
+module.exports = function(request) {
+    var _this = this;
 
-        this.log.debug(request, &quot;Handling heartbeat&quot;);
-        var defer = Q.defer();
+    this.log.debug(request, &quot;Handling heartbeat&quot;);
+    var defer = Q.defer();
 
-        Q.nextTick(_.bind(function() {
-            this.db.hset(request.id, &quot;lastHeartbeatTs&quot;, moment().utc().unix());
-            this.db.hget(request.id, &quot;status&quot;, function(err, state) {
-                if(err) defer.reject(err);
+    Q.nextTick(_.bind(function() {
+        this.db.hset(request.id, &quot;lastHeartbeatTs&quot;, moment().utc().unix());
+        this.db.hget(request.id, &quot;status&quot;, function(err, state) {
+            if(err) defer.reject(err);
+            else {
+                _this.log.trace(arguments, &quot;Agent %s state&quot;, request.id);
+
+                if(state !== &#x27;CONNECTED&#x27;) {
+                    _this.log.info(&quot;Agent %s has been detected has connected&quot;, request.id);
+                    _this.db.hset(request.id, &#x27;status&#x27;, &#x27;CONNECTED&#x27;);
+
+                    _this.emit(&#x27;agent-connected&#x27;, {
+                        id: request.id,
+                        ts: moment().utc().unix()
+                    });
+                }
                 else {
-                    _this.log.trace(arguments, &quot;Agent %s state&quot;, request.id);
+                    _this.log.debug(&quot;Agent %s was already connected.&quot;, request.id);
 
-                    if(state !== &#x27;CONNECTED&#x27;) {
-                        _this.log.info(&quot;Agent %s has been detected has connected&quot;, request.id);
-                        _this.db.hset(request.id, &#x27;status&#x27;, &#x27;CONNECTED&#x27;);
+                    // Check if we have a watchdog... we may not have one if we were the one being down
+                    _this.db.hget(request.id, &#x27;heartbeat-interval&#x27;, function(err, interval) {
+                        _this.log.trace(&quot;Detected heartbeat interval: %s&quot;, interval);
 
-                        _this.emit(&#x27;agent-connected&#x27;, {
-                            id: request.id,
-                            ts: moment().utc().unix()
-                        });
-                    }
-                    else {
-                        _this.log.debug(&quot;Agent %s was already connected.&quot;, request.id);
+                        if(!_this.hasWatchDog(request.id)) {
 
-                        // Check if we have a watchdog... we may not have one if we were the one being down
-                        _this.db.hget(request.id, &#x27;heartbeat-interval&#x27;, function(err, interval) {
-                            _this.log.trace(&quot;Detected heartbeat interval: %s&quot;, interval);
+                            _this.ensureWatchDog({
+                                id:request.id,
+                                interval:interval || 30
+                            });
 
-                            if(!_this.hasWatchDog(request.id)) {
+                            // Force the execution of a configure command on the agent
+                            _this.executeOnAgent(request.id, &#x27;configure&#x27;, {restart: true});
+                        }
 
-                                _this.ensureWatchDog({
-                                    id:request.id,
-                                    interval:interval || 30
-                                });
-
-                                // Force the execution of a configure command on the agent
-                                _this.executeOnAgent(request.id, &#x27;configure&#x27;, {restart: true});
-                            }
-
-                        });
-                    }
-
-                    // Do we have a payload, ask for advise on how to handle this extra infos
-                    if(request.payload) {
-                        _this.log.debug(&quot;A payload was supplied by agent %s, asking for help from our host&quot;, request.id);
-                        _this.emit(&#x27;heartbeat-payload&#x27;, request, request.payload);
-                    }
-
-                    defer.resolve();
+                    });
                 }
 
-            });
+                // Do we have a payload, ask for advise on how to handle this extra infos
+                if(request.payload) {
+                    _this.log.debug(&quot;A payload was supplied by agent %s, asking for help from our host&quot;, request.id);
+                    _this.emit(&#x27;heartbeat-payload&#x27;, request, request.payload);
+                }
 
-        }, this));
+                defer.resolve();
+            }
 
-        return defer.promise;
-    }
+        });
 
-})();
+    }, this));
+
+    return defer.promise;
+}
 
     </pre>
 </div>
