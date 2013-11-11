@@ -1,4 +1,4 @@
-# SafeLink
+# SafeLink [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jgrenon/safelink/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 SafeLink is an open-source NodeJS library created to maintain long-term communication between distant remote sites with varying network quality. After deploying many different solutions for one
 of our customers, without much success, we decided to create our own library to satisfy our particular specifications.

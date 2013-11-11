@@ -1,0 +1,21 @@
+send_interval: 1500
+
+sender:
+  endpoint: http://localhost:9090
+  id: sender
+  version: 100
+  logLevel: trace
+  polling:
+    interval: 3
+
+receiver:
+  id: receiver
+  endpoint: http://localhost:9090
+  version: 100
+  logLevel: info
+  polling:
+    interval: 1
+
+dispatcher:
+  port: 9090
+  logLevel: info
