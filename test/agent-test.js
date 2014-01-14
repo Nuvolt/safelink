@@ -37,7 +37,7 @@
         channels:['system']
     });
 
-    agent.connect({waitForDispatcher:true}).then(function(connection) {
+    agent.start({waitForDispatcher:true}).then(function(connection) {
 
         // Register to network events
         connection.on('heartbeat', function(e) {

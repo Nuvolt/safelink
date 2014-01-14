@@ -1,0 +1,28 @@
+logLevel: trace
+
+scenario:
+  duration: 3600
+  agent_count: 10
+  failures:
+    agent_failure_threshold: 0.075
+    dispatcher_failure_threshold: 0.075
+    network_failure_threshold: 0
+    max_failure_duration: 90
+    min_failure_duration: 10
+
+agent_spec:
+  endpoint: http://localhost:9090
+  version: 100
+  logLevel: debug
+  polling:
+    interval: 3
+  websocket:
+    dispatcher: ws://localhost:9091/
+
+dispatcher:
+  port: 9090
+  logLevel: trace
+  wss:
+    port: 9091
+
+

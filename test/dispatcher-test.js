@@ -3,7 +3,10 @@
 
 
     var dispatcher = new Dispatcher({
-        port:9090
+        port:9090,
+        wss:{
+            port:9091
+        }
     });
 
     dispatcher.listen().then(function() {

@@ -1,0 +1,18 @@
+
+agent:
+  endpoint: http://localhost:9090
+  id: sender
+  version: 100
+  logLevel: trace
+  polling:
+    interval: 3
+  websocket:
+    dispatcher: ws://localhost:9091/
+
+dispatcher:
+  port: 9090
+  logLevel: trace
+  wss:
+    port: 9091
+
+

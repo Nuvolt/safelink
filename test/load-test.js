@@ -16,48 +16,46 @@ var interval;
 dispatcher.listen().then(function() {
     dispatcher.log.info("Test Dispatcher Running on port %d...", dispatcher.port);
     dispatcher.log.info("Connecting both sender and receiver");
-    sender.connect().then(function(sender){
-        sender.log.info("Sender is connected");
+    sender.start();
 
-        sender.on('configure', function(command) {
-            sender.log.info ("Configuring our event handlers");
+    sender.log.info("Sender is connected");
 
-            // Register our agent to receive command progress events
-            sender.subscribeTo('command-progress', function(progress) {
-                sender.log.info("Received progress: ", progress);
-            },{force: command.payload.restart});
+    sender.on('configure', function(command) {
+        sender.log.info ("Configuring our event handlers");
 
-            // Launch our command execution loop.
-            if(!interval) {
-                interval = setInterval(function() {
-                    sender.executeOn('receiver', "ping-pong", {ping:true}).then(function(result) {
-                        sender.log.info("Received result:", result);
-                    }, function(err) {
-                        sender.log.error("Unable to execute ping-pong",err);
-                    });
-                }, config.send_interval);
-            }
+        // Register our agent to receive command progress events
+        sender.subscribeTo('command-progress', function(progress) {
+            sender.log.info("Received progress: ", progress);
+        },{force: command.payload.restart});
 
-        });
+        // Launch our command execution loop.
+        if(!interval) {
+            interval = setInterval(function() {
+                sender.executeOn('receiver', "ping-pong", {ping:true}).then(function(result) {
+                    sender.log.info("Received result:", result);
+                }, function(err) {
+                    sender.log.error("Unable to execute ping-pong",err);
+                });
+            }, config.send_interval);
+        }
 
     });
 
-    receiver.connect().then(function() {
-        receiver.log.info("Sender is connected");
+    receiver.start();
+    receiver.log.info("Sender is connected");
 
-        receiver.registerCommandHandler('ping-pong', function(command, deferredResult) {
+    receiver.registerCommandHandler('ping-pong', function(command, deferredResult) {
+        setTimeout(function(){
+            receiver.log.info("Sending back pong response for command %s", command.id);
+
+            // Send progress notification
+            deferredResult.notify({progress: 1});
+
+            // Send the final response
             setTimeout(function(){
-                receiver.log.info("Sending back pong response for command %s", command.id);
-
-                // Send progress notification
-                deferredResult.notify({progress: 1});
-
-                // Send the final response
-                setTimeout(function(){
-                    deferredResult.resolve({pong:true});
-                }, 3500);
-            }, 0);
-        });
+                deferredResult.resolve({pong:true});
+            }, 3500);
+        }, 0);
     });
 
 });
