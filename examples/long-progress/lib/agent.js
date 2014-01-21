@@ -7,7 +7,7 @@ module.exports.launch = function(opts) {
     var agent = new Agent({
         id: "long-process-executer",
         endpoint: "http://localhost:9090",
-        logLevel: 'debug'
+        logLevel: 'info'
     });
 
     var task;
@@ -18,7 +18,7 @@ module.exports.launch = function(opts) {
         taskDeferred = deferred;
         console.log("Executing a long-task");
         task = setInterval(function() {
-            deferred.notify({value: progress, msg: 'Long task is progressing:'+progress});
+            deferred.notify({value: progress, msg: 'Long task is progressing: '+progress});
             if(progress >= 100) {
                 deferred.resolve({progress:progress, success: true});
             }

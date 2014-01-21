@@ -10,7 +10,7 @@ module.exports.launch = function(opts) {
         wss:{
             port:9091
         },
-        logLevel: 'debug'
+        logLevel: 'info'
     });
 
     return dispatcher.listen();

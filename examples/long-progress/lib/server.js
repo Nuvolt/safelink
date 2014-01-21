@@ -41,14 +41,13 @@ module.exports.launch = function(opts) {
 
         socket.on('start-task', function() {
             console.log('Starting long task');
-            agent.executeOn('long-process-executer', 'start-long-task', {}, {timeout:220}).then(function(result){
+            agent.executeOn('long-process-executer', 'start-long-task', {}, {timeout:220}).then(function(result) {
                 console.log("Received task result", result);
                 socket.emit('task-complete', result);
             }, function(err) {
                 console.log("Task error", err);
                 socket.emit('task-error', err);
             }, function(progress) {
-                console.log("task progress", progress, socket);
                 socket.emit('task-progress', progress);
             });
 
