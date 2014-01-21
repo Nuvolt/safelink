@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/index.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/stop-monitoring.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/index.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/stop-monitoring.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -119,10 +119,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var Q = require(&#x27;q&#x27;),
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
-module.exports = {
-    Agent: require(&#x27;./lib/agent&#x27;),
-    Dispatcher: require(&#x27;./lib/dispatcher&#x27;)
+require(&#x27;underscore-query&#x27;);
+
+module.exports = function(request) {
+    var _this = this;
+    this.log.trace(request, &quot;Handling stop-monitoring command&quot;);
+    var defer = Q.defer();
+    Q.nextTick(function() {
+        _this.uninstallMonitor(request.payload.agent, request.payload.key);
+        defer.resolve({success:true});
+    });
+
+    return defer.promise;
 };
 
     </pre>

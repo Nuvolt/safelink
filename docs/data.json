@@ -6,106 +6,113 @@
         "description": "SafeLink is an open-source NodeJS library created to maintain long-term communication between distant remote sites with varying network quality"
     },
     "files": {
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-connect.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-connect.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/broadcast.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/broadcast.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-disconnect.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-disconnect.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/emit-to.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/emit-to.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/execute-command-on.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/execute-command-on.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/execute-command.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/execute-command.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/handle-command-error.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/handle-command-error.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/heartbeat.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/heartbeat.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/handle-command-error.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/handle-command-error.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/index.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/index.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/heartbeat.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/heartbeat.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/post-command-progress.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/post-command-progress.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/index.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/index.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/post-command-response.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/post-command-response.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/post-command-response.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/post-command-response.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-commands.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-commands.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-commands.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-commands.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-events.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-events.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-events.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-events.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/start-monitoring.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/start-monitoring.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/stop-monitoring.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/stop-monitoring.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/unsubscribe.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/unsubscribe.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/subscribe.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/subscribe.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+        "/Users/joelgrenon/products/safelink/lib/protocol/unsubscribe.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/protocol/unsubscribe.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "/Users/joelgrenon/products/safelink/lib/agent.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/agent.js",
             "modules": {},
             "classes": {
                 "Agent": 1
@@ -113,8 +120,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+        "/Users/joelgrenon/products/safelink/lib/dispatcher.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
             "modules": {},
             "classes": {
                 "Dispatcher": 1
@@ -122,8 +129,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
+        "/Users/joelgrenon/products/safelink/lib/watchdog.js": {
+            "name": "/Users/joelgrenon/products/safelink/lib/watchdog.js",
             "modules": {},
             "classes": {
                 "WatchDog": 1
@@ -131,22 +138,29 @@
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/test/agent-test.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/test/agent-test.js",
+        "/Users/joelgrenon/products/safelink/test/agent-deferred-payload-test.js": {
+            "name": "/Users/joelgrenon/products/safelink/test/agent-deferred-payload-test.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js",
+        "/Users/joelgrenon/products/safelink/test/agent-test.js": {
+            "name": "/Users/joelgrenon/products/safelink/test/agent-test.js",
             "modules": {},
             "classes": {},
             "fors": {},
             "namespaces": {}
         },
-        "/Users/joelgrenon/services/smartscan/safelink/index.js": {
-            "name": "/Users/joelgrenon/services/smartscan/safelink/index.js",
+        "/Users/joelgrenon/products/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js": {
+            "name": "/Users/joelgrenon/products/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "/Users/joelgrenon/products/safelink/index.js": {
+            "name": "/Users/joelgrenon/products/safelink/index.js",
             "modules": {},
             "classes": {},
             "fors": {},
@@ -163,8 +177,8 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 29,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 31,
             "description": "Primary client-side abstraction used to establish and manage communication with a central dispatcher",
             "params": [
                 {
@@ -182,8 +196,8 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 41,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 42,
             "extends": "EventEmitter",
             "description": "The dispatcher is responsible for central coordination of all agents. It monitors their liveness and make sure they can communication between one and other.\nThe Dispatcher is an {EventEmitter} and will make sure events are remotely replicated between agents.",
             "params": [
@@ -202,7 +216,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/watchdog.js",
             "line": 22,
             "access": "protected",
             "tagname": "",
@@ -224,85 +238,91 @@
     },
     "classitems": [
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-connect.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/broadcast.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-disconnect.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/emit-to.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/execute-command-on.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/execute-command.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/handle-command-error.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/heartbeat.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/handle-command-error.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/index.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/heartbeat.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/post-command-progress.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/index.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/post-command-response.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/post-command-response.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-commands.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-commands.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-events.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-events.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/start-monitoring.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/stop-monitoring.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/subscribe.js",
+            "line": 1,
+            "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/subscribe.js",
             "line": 54,
             "description": "Abstract an agent subscription for various custom events. Each event will be broadcast to the agent\nas they are received by the dispatcher through the standard emit method.",
             "params": [
@@ -319,20 +339,30 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/protocol/unsubscribe.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/protocol/unsubscribe.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 51,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 67,
+            "description": "Called to initiate the heartbeat process and install all transports",
+            "return": {
+                "description": "resolved when the agent is started",
+                "type": "Promise"
+            },
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 169,
             "itemtype": "method",
             "name": "connect",
             "params": [
@@ -341,6 +371,7 @@
                     "description": "Supported options are :\n  - waitForDispatcher: Indicate if the agent will exit of retry connection with the dispatcher indefinitely. Default to false."
                 }
             ],
+            "obsolete": "Not used any more since version 0.9.0. Mapped to start.",
             "return": {
                 "description": "",
                 "type": "*"
@@ -348,30 +379,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 66,
-            "itemtype": "event",
-            "name": "before-connect",
-            "description": "Fired before the agent is connected to the dispatcher.",
-            "class": "Agent"
-        },
-        {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 87,
-            "itemtype": "event",
-            "name": "connected",
-            "description": "Fired when the dispatcher has been reached and accepted our initial connection request. The response\n to the connect call is passed in parameter",
-            "params": [
-                {
-                    "name": "response",
-                    "description": "The response of the connect call as sent by the dispatcher"
-                }
-            ],
-            "class": "Agent"
-        },
-        {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 131,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 180,
             "itemtype": "method",
             "name": "subscribeTo",
             "description": "Will connect this agent with remote events emitted by the dispatcher. These events may be triggered by the dispatcher or other agents connected\n on the network. For now, you can only subscribe to events that are sent to you, but in the future, we will add support for channels to receive 'room-like' messages.",
@@ -394,8 +403,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 179,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 228,
             "itemtype": "method",
             "name": "unsubscribeFrom",
             "params": [
@@ -407,8 +416,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 210,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 259,
             "itemtype": "method",
             "name": "broadcast",
             "description": "Send a notification to whomever is listening to. This is not directed to a specific agent, but to anyone\n on the network, including the dispatcher.",
@@ -435,8 +444,23 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 249,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 298,
+            "params": [
+                {
+                    "name": "key",
+                    "description": ""
+                },
+                {
+                    "name": "options",
+                    "description": ""
+                }
+            ],
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 310,
             "itemtype": "method",
             "name": "execute",
             "description": "Execute a remote command. Depending on the dispatcher context, the command might be executed by\nthe dispatcher itself or by another agent, having registered a remote command handler with the dispacher.",
@@ -461,8 +485,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 292,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 358,
             "itemtype": "method",
             "name": "executeOn",
             "description": "Execute a remote command on a specific agent. The command will be forward directly to this agent.",
@@ -487,8 +511,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 335,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 406,
             "params": [
                 {
                     "name": "agentId",
@@ -514,8 +538,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 373,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 444,
             "itemtype": "method",
             "name": "registerCommandHandler",
             "description": "Add or replace a command handler. This handler will be execute each time a command of type **key** will be received.",
@@ -532,8 +556,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 385,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 456,
             "itemtype": "method",
             "name": "retrieveCommands",
             "description": "Force the retrieval of any pending commands from the dispatcher.",
@@ -550,8 +574,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 404,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 475,
             "itemtype": "event",
             "name": "network-error",
             "description": "Emitted when there is a network problem and we were unable to communicate with the dispatcher.",
@@ -570,8 +594,8 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 456,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 527,
             "itemtype": "method",
             "name": "retrieveEvents",
             "description": "Retrieve all pending events for this agent.",
@@ -588,8 +612,41 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/agent.js",
-            "line": 630,
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 749,
+            "itemtype": "method",
+            "name": "dispatchP",
+            "access": "private",
+            "tagname": "",
+            "description": "Helper used to package a command to the dispatcher. Will apply the right format and properly handle results, including errors.",
+            "params": [
+                {
+                    "name": "agent",
+                    "description": ""
+                },
+                {
+                    "name": "key",
+                    "description": ""
+                },
+                {
+                    "name": "payload",
+                    "description": ""
+                },
+                {
+                    "name": "options",
+                    "description": "contains all options. timeout (default 30) is supported right now.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "A promise for the command result.",
+                "type": "Promise"
+            },
+            "class": "Agent"
+        },
+        {
+            "file": "/Users/joelgrenon/products/safelink/lib/agent.js",
+            "line": 797,
             "itemtype": "method",
             "name": "dispatch",
             "access": "private",
@@ -613,6 +670,7 @@
                     "description": "The callback that will be called when we receive the result (or error)"
                 }
             ],
+            "obsolete": "{dispatchP} should be used starting with version 0.9.0",
             "return": {
                 "description": "",
                 "type": "*"
@@ -620,14 +678,14 @@
             "class": "Agent"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 58,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 70,
             "itemtype": "event",
             "name": "internal.db.error",
             "description": "Triggered if the internal Redis database cannot be accessed.",
@@ -641,8 +699,8 @@
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 143,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 220,
             "itemtype": "method",
             "name": "listen",
             "description": "Connect the HTTP server to the configured port.",
@@ -653,8 +711,20 @@
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 154,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 255,
+            "description": "{\n           agent:request.id,\n           key:request.payload.key,\n           interval: request.payload.interval || 5,\n           snapshots: request.payload.snapshots || \"ALL\"\n       }",
+            "params": [
+                {
+                    "name": "cfg",
+                    "description": ""
+                }
+            ],
+            "class": "Dispatcher"
+        },
+        {
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 296,
             "itemtype": "method",
             "name": "listPendingCommands",
             "description": "List all pending commands for a specific agent",
@@ -672,11 +742,11 @@
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 170,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 312,
+            "description": "Execute a command on a specific agent",
             "itemtype": "method",
             "name": "executeOnAgent",
-            "description": "Execute a command on a specific agent",
             "params": [
                 {
                     "name": "agentId",
@@ -692,6 +762,11 @@
                     "name": "payload",
                     "description": "The data that will be passed with the command",
                     "type": "Object"
+                },
+                {
+                    "name": "options",
+                    "description": "Contains options that affects the way the command is executed",
+                    "type": "Object"
                 }
             ],
             "return": {
@@ -701,8 +776,8 @@
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 220,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 399,
             "itemtype": "method",
             "name": "emitTo",
             "description": "Emit an event to a specific agent only.",
@@ -733,8 +808,8 @@
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js",
-            "line": 246,
+            "file": "/Users/joelgrenon/products/safelink/lib/dispatcher.js",
+            "line": 426,
             "itemtype": "method",
             "name": "applyCommandResponse",
             "description": "Called when an agent has sent back the response to an active command. This will apply the response and resolve the\nassociated promise.",
@@ -755,26 +830,33 @@
             "class": "Dispatcher"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js",
+            "file": "/Users/joelgrenon/products/safelink/lib/watchdog.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": "WatchDog"
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/test/agent-test.js",
+            "file": "/Users/joelgrenon/products/safelink/test/agent-deferred-payload-test.js",
             "line": 10,
             "description": "Create a SiteLink agent to handle communication for this client",
             "type": "{Agent}",
             "class": ""
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js",
+            "file": "/Users/joelgrenon/products/safelink/test/agent-test.js",
+            "line": 10,
+            "description": "Create a SiteLink agent to handle communication for this client",
+            "type": "{Agent}",
+            "class": ""
+        },
+        {
+            "file": "/Users/joelgrenon/products/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js",
             "line": 1,
             "description": "Bootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
             "class": ""
         },
         {
-            "file": "/Users/joelgrenon/services/smartscan/safelink/index.js",
+            "file": "/Users/joelgrenon/products/safelink/index.js",
             "line": 1,
             "description": "Copyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
             "class": ""
@@ -782,144 +864,176 @@
     ],
     "warnings": [
         {
-            "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:51"
+            "message": "unknown tag: obsolete",
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:169"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:210"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:169"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:249"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:259"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:292"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:310"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:385"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:358"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:456"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:456"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:630"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:527"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:749"
+        },
+        {
+            "message": "unknown tag: obsolete",
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:797"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:797"
         },
         {
             "message": "replacing incorrect tag: extend with extends",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:41"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:42"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:143"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:220"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:154"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:296"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:170"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:312"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:220"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:399"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:246"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:426"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-connect.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/broadcast.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-disconnect.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/emit-to.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/execute-command-on.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/emit-to.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/execute-command.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command-on.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/handle-command-error.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/heartbeat.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/handle-command-error.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/index.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/heartbeat.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/post-command-progress.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/index.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/post-command-response.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/post-command-response.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-commands.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-commands.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-events.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-events.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/start-monitoring.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/stop-monitoring.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/subscribe.js:1"
         },
         {
             "message": "Missing item type\nAbstract an agent subscription for various custom events. Each event will be broadcast to the agent\nas they are received by the dispatcher through the standard emit method.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/subscribe.js:54"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/subscribe.js:54"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/protocol/unsubscribe.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/protocol/unsubscribe.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:1"
+        },
+        {
+            "message": "Missing item type\nCalled to initiate the heartbeat process and install all transports",
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:67"
         },
         {
             "message": "Missing item type",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/agent.js:335"
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:298"
+        },
+        {
+            "message": "Missing item type",
+            "line": " /Users/joelgrenon/products/safelink/lib/agent.js:406"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/dispatcher.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:1"
+        },
+        {
+            "message": "Missing item type\n{\n           agent:request.id,\n           key:request.payload.key,\n           interval: request.payload.interval || 5,\n           snapshots: request.payload.snapshots || \"ALL\"\n       }",
+            "line": " /Users/joelgrenon/products/safelink/lib/dispatcher.js:255"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/lib/watchdog.js:1"
+            "line": " /Users/joelgrenon/products/safelink/lib/watchdog.js:1"
         },
         {
             "message": "Missing item type\nCreate a SiteLink agent to handle communication for this client",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/test/agent-test.js:10"
+            "line": " /Users/joelgrenon/products/safelink/test/agent-deferred-payload-test.js:10"
+        },
+        {
+            "message": "Missing item type\nCreate a SiteLink agent to handle communication for this client",
+            "line": " /Users/joelgrenon/products/safelink/test/agent-test.js:10"
         },
         {
             "message": "Missing item type\nBootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js:1"
+            "line": " /Users/joelgrenon/products/safelink/vendors/yuidoc-bootstrap-theme/assets/vendor/bootstrap/js/bootstrap.min.js:1"
         },
         {
             "message": "Missing item type\nCopyright 2013 Joel Grenon\nLicensed under the Apache License, Version 2.0 (the \"License\");\n you may not use this file except in compliance with the License.\n You may obtain a copy of the License at\nhttp://www.apache.org/licenses/LICENSE-2.0\nUnless required by applicable law or agreed to in writing, software\n distributed under the License is distributed on an \"AS IS\" BASIS,\n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n See the License for the specific language governing permissions and\n limitations under the License.",
-            "line": " /Users/joelgrenon/services/smartscan/safelink/index.js:1"
+            "line": " /Users/joelgrenon/products/safelink/index.js:1"
         }
     ]
 }

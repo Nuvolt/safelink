@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/unsubscribe.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/execute-command-on.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/unsubscribe.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/execute-command-on.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -119,39 +119,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var Q = require(&#x27;q&#x27;),
-    redis = require(&#x27;redis&#x27;),
-    _ = require(&#x27;lodash&#x27;),
-    async = require(&#x27;async&#x27;),
-    moment = require(&#x27;moment&#x27;);
-
-require(&#x27;underscore-query&#x27;);
 
 module.exports = function(request) {
     var _this = this;
-    this.log.trace(request, &quot;Handling unsubscribe command&quot;);
-    var defer = Q.defer();
-    Q.nextTick(function() {
+    this.log.trace(request, &quot;Handling execute-command-on command&quot;);
 
-        // Look for an existing subscription for this agent
-        var subscription = _.query.build( _this.eventSubscriptions ).and({&quot;agentId&quot;:request.id}).first();
-        if(subscription) {
-            // Remove the specified local listener for this event
-            _this.removeListener(request.event, subscription.listener(request));
+    if(request.uuid) {
+        request.options = request.options || {};
+        request.options.uuid = request.uuid;
+    }
 
-            subscription.events.remove(request.event);
-            if(subscription.events.length === 0)
-                _this.eventSubscriptions.remove(subscription);
-
-            _this.log.info(&quot;Agent successfully unsubscribed from event %d&quot;, request.event);
-        }
-        else
-            _this.log.warn(&quot;Tried to unsubscribe a missing subscription. Nothing was done&quot;);
-
-        defer.resolve({success:true});
+    return this.executeOnAgent(request.agentId, request.commandKey, request.payload, request.options).progress(function(progress) {
+        _this.log.debug(&quot;Emitting command %s(%s) progress&quot;, progress.cmd.key, progress.cmd.id, progress.data);
+        _this.emitTo(request.id, &#x27;command-progress&#x27;, progress);
     });
-
-    return defer.promise;
 };
 
     </pre>

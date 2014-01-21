@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-connect.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-events.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-connect.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-events.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -120,43 +120,48 @@
  * limitations under the License.
  */
 var Q = require(&#x27;q&#x27;),
-    moment = require(&#x27;moment&#x27;),
-    _ = require(&#x27;lodash&#x27;);
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
 module.exports = function(request) {
     var _this = this;
+    this.log.trace(request, &quot;Handling retrieve-pending-events&quot;);
     var defer = Q.defer();
+    Q.nextTick(function() {
+        var events = [], event = &quot;DUMMY&quot;;
 
-    Q.nextTick(_.bind(function() {
-        this.log.info(request, &quot;Received connection request for agent %s&quot;, request.id);
+        // Asynchronously loop through all available events, removing them from our queue
+        async.whilst(
+            function() { return event !== null; },
+            function(callback) {
+                _this.db.lpop(request.id+&quot;_events&quot;, function(err, e) {
+                    if(err) callback(err);
+                    else {
+                        if(e) {
+                            _this.log.trace(e, &quot;Event found in queue&quot;);
+                            var parsedEvent = JSON.parse(e);
+                            events.push(parsedEvent);
+                        }
+                        else
+                            _this.log.trace(&quot;No more events for agent %s&quot;, request.id);
 
-        // Create a new structure for this agent
-        this.db.multi()
-            .hset(request.id, &quot;connectedTs&quot;, moment().utc().unix())
-            .hset(request.id, &quot;lastHeartbeatTs&quot;, moment().utc().unix())
-            .hset(request.id, &quot;version&quot;, request.version)
-            .hset(request.id, &quot;heartbeat-interval&quot;, request.interval)
-            .exec(function(err) {
+                        event = e;
+                        callback();
+                    }
+                });
+            },
+            function(err) {
                 if(err) defer.reject(err);
                 else {
-                    _this.ensureWatchDog(request).then(function(watchdog) {
-
-                        // Force the execution of a configure command on the agent
-                        _this.executeOnAgent(request.id, &#x27;configure&#x27;, {restart: false}).then(function() {
-                            _this.emit(&#x27;agent-connected&#x27;, request.id);
-                        }, function(err) {
-                            _this.log.error(err, &quot;Agent %s has thrown an error while configuring itself&quot;, request.id);
-                        });
-                        defer.resolve({success:true});
-
-                    }, function(err){
-                        _this.log.warn(&quot;Unable to install watchdog for agent %s. Error = &quot;, request.id, err);
-                        defer.reject({success:false, error:err});
-                    });
+                    _this.log.trace(&quot;Agent %s will receive %d events to handle&quot;, request.id, events.length);
+                    defer.resolve(events);
                 }
-            });
+            }
+        );
 
-    }, this));
+    });
 
     return defer.promise;
 }

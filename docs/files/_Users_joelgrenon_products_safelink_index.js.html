@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/index.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/index.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/index.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/index.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -119,25 +119,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function(){
 
-    module.exports = {
-        &#x27;agent-connect&#x27; : require(&#x27;./agent-connect&#x27;),
-        &#x27;agent-disconnect&#x27; : require(&#x27;./agent-disconnect&#x27;),
-        &#x27;heartbeat&#x27; : require(&#x27;./heartbeat&#x27;),
-        &#x27;retrieve-pending-commands&#x27;: require(&#x27;./retrieve-pending-commands&#x27;),
-        &quot;command-response&quot; : require(&#x27;./post-command-response&#x27;),
-        &quot;command-error&quot;: require(&#x27;./handle-command-error&#x27;),
-        &#x27;subscribe&#x27;: require(&#x27;./subscribe&#x27;),
-        &#x27;unsubscribe&#x27;: require(&#x27;./unsubscribe&#x27;),
-        &#x27;retrieve-pending-events&#x27;: require(&#x27;./retrieve-pending-events&#x27;),
-        &#x27;broadcast&#x27;: require(&#x27;./broadcast&#x27;),
-        &#x27;execute-command&#x27;: require(&#x27;./execute-command&#x27;),
-        &#x27;execute-command-on&#x27;: require(&#x27;./execute-command-on&#x27;),
-        &#x27;emit-to&#x27;: require(&#x27;./emit-to&#x27;)
-    };
-
-})();
+module.exports = {
+    Agent: require(&#x27;./lib/agent&#x27;),
+    Dispatcher: require(&#x27;./lib/dispatcher&#x27;)
+};
 
     </pre>
 </div>

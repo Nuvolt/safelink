@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-commands.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-commands.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/retrieve-pending-commands.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/retrieve-pending-commands.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -125,6 +125,8 @@ var Q = require(&#x27;q&#x27;),
     async = require(&#x27;async&#x27;),
     moment = require(&#x27;moment&#x27;);
 
+    require(&#x27;underscore-query&#x27;);
+
 module.exports = function(request) {
     var _this = this;
     this.log.trace(request, &quot;Handling retrieve-pending-commands&quot;);
@@ -141,6 +143,7 @@ module.exports = function(request) {
                         id:cmd.id,
                         key:results[0],
                         payload: results[1],
+                        timeout: cmd.timeout || _this.timeout,
                         ts:cmd.ts
                     });
                     cmd.status = &#x27;ACTIVE&#x27;;

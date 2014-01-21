@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-disconnect.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/emit-to.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/agent-disconnect.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/emit-to.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -120,26 +120,15 @@
  * limitations under the License.
  */
 var Q = require(&#x27;q&#x27;),
-    moment = require(&#x27;moment&#x27;),
-    _ = require(&#x27;lodash&#x27;);
+    redis = require(&#x27;redis&#x27;),
+    _ = require(&#x27;lodash&#x27;),
+    moment = require(&#x27;moment&#x27;);
 
 module.exports = function(request) {
-    var _this = this;
-    var defer = Q.defer();
-
-    Q.nextTick(_.bind(function() {
-        this.log.info(request, &quot;Received disconnection request for agent %s&quot;, request.id);
-
-        // Create a new structure for this agent
-        this.db.del(request.id);
-        _this.stopAgentWatchDog(request.id);
-        _this.emit(&#x27;agent-disconnected&#x27;, request.id);
-        defer.resolve();
-
-    }, this));
-
-    return defer.promise;
-}
+    this.log.trace(request, &quot;Handling emitTo command&quot;);
+    //TODO: Add channel support
+    return Q.invoke(this, &quot;emitTo&quot;, request.agents, request.event, request.payload, request.options);
+};
 
     </pre>
 </div>

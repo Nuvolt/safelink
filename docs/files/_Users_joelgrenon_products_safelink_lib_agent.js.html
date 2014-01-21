@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/agent.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/agent.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/agent.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/agent.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -124,8 +124,10 @@
         request = require(&#x27;request&#x27;),
         Q = require(&#x27;q&#x27;),
         _ = require(&#x27;lodash&#x27;),
-        bunyan = require(&#x27;bunyan&#x27;),
-        events = require(&#x27;events&#x27;);
+        EventEmitter = require(&#x27;eventemitter3&#x27;),
+        WebSocket = require(&#x27;ws&#x27;),
+        shortid = require(&#x27;shortid&#x27;),
+        bunyan = require(&#x27;bunyan&#x27;);
 
     require(&#x27;underscore-query&#x27;);
 
@@ -138,99 +140,146 @@
          * @constructor
          */
         function Agent(cfg) {
-            this.id = cfg.id || _.uniqueId(&#x27;agent_&#x27;);
+            var id = cfg.id || shortid.generate();
+
+            this.id = id;
             this.version = cfg.version || 100;
             this.url = cfg.endpoint;
             this.timeout = cfg.timeout || 30;
-            this.log = cfg.log || bunyan.createLogger({name:this.id, level:cfg.logLevel || &#x27;info&#x27;});
+            this.websocket = cfg.websocket || false;
+            this.log = cfg.log || bunyan.createLogger({name:id, level:cfg.logLevel || &#x27;info&#x27;});
             this.heartbeatSpec = cfg.heartbeat || { interval: 30};
             this.pollingSpec = cfg.polling || { interval: 5 };
             this.commandHandlers = _.defaults(cfg.commandHandlers || {}, {
                 configure: simpleCommandHandler(this, &#x27;configure&#x27;)
             });
-            this.eventHandlers = [];
+
+            // Add basic event handlers
+            this.eventHandlers = [{
+                key:&#x27;command-progress&#x27;,
+                scope:this,
+                handler:onCommandProgress
+            }];
+
+            // A simple waiting command cache to track executing commands
+            this.waitingCommands = {};
+
+            EventEmitter.call(this);
         }
 
-        util.inherits(Agent, events.EventEmitter);
+        util.inherits(Agent, EventEmitter);
+
+        /**
+         * Called to initiate the heartbeat process and install all transports
+         * @return {Promise} resolved when the agent is started
+         */
+        Agent.prototype.start = function() {
+            var _this = this;
+            var defer = Q.defer();
+
+            Q.nextTick(function() {
+                // Hook to let host perform extra configuration before the agent is started
+                 _this.emit(&#x27;before-start&#x27;);
+
+                // Register an internal handler to send heartbeat when requested
+                _this.on(&#x27;send-heartbeat&#x27;, _.bind(heartbeat, _this));
+
+                // Send the first heartbeat
+                _this.emit(&#x27;send-heartbeat&#x27;);
+
+                // Launch the pending command polling
+                if(_this.pendingCommandHandle)
+                    clearInterval(_this.pendingCommandHandle);
+                _this.pendingCommandHandle = setInterval(_.bind(retrievePendingCommands, _this), _this.pollingSpec.interval * 1000);
+
+                if(_this.pendingEventsHandle)
+                    clearInterval(_this.pendingEventsHandle);
+                _this.pendingEventsHandle = setInterval(_.bind(retrievePendingEvents, _this), _this.pollingSpec.interval * 1000);
+
+                // Register our command execution handler
+                _this.on(&#x27;command&#x27;, _.bind(executeCommand, _this));
+
+                // Establish the web socket connection
+                if(_this.websocket) {
+                    _this.ws = new WebSocket(_this.websocket.dispatcher);
+
+                    _this.ws.on(&#x27;open&#x27;, function() {
+                        _this.log.debug(&quot;WS dispatcher link was successfully established&quot;);
+                    });
+
+                    _this.ws.on(&#x27;message&#x27;, function(msg) {
+                        _this.log.warn(&quot;WS message received&quot;, msg);
+                    });
+                }
+
+                defer.resolve(_this);
+            });
+
+            return defer.promise;
+        };
+
+        Agent.prototype.stop = function() {
+            this.log.debug(&quot;Stopping agent %s&quot;, this.id);
+            this.suspend();
+        };
+
+        Agent.prototype.suspend = function(duration) {
+            var _this = this;
+            this.suspended = true;
+
+            if(this.pendingCommandHandle) {
+                this.log.trace(&quot;Stopping pending command handler&quot;);
+                clearInterval(this.pendingCommandHandle);
+            }
+
+            if(this.pendingEventsHandle) {
+                this.log.trace(&quot;Stopping pending event handler&quot;);
+                clearInterval(this.pendingEventsHandle);
+            }
+
+            if(this.nextHeartbeat) {
+                this.log.trace(&quot;Preventing next heartbeat from firing&quot;);
+                clearTimeout(this.nextHeartbeat);
+            }
+
+            if(this.resumeTimer) {
+                this.log.trace(&quot;Cancel the resume timer&quot;);
+                clearTimeout(this.resumeTimer);
+            }
+
+            if(duration) {
+                this.resumeTimer = setTimeout(function() {
+                    _this.resume();
+                }, duration * 1000);
+            }
+        };
+
+        Agent.prototype.resume = function() {
+            this.suspended = false;
+
+            // Launch the pending command polling
+            if(this.pendingCommandHandle)
+                clearInterval(this.pendingCommandHandle);
+            this.pendingCommandHandle = setInterval(_.bind(retrievePendingCommands, this), this.pollingSpec.interval * 1000);
+
+            if(this.pendingEventsHandle)
+                clearInterval(this.pendingEventsHandle);
+            this.pendingEventsHandle = setInterval(_.bind(retrievePendingEvents, this), this.pollingSpec.interval * 1000);
+
+            delete this.resumeTimer;
+
+            this.emit(&#x27;send-heartbeat&#x27;);
+        };
 
         /**
          * @method connect
          * @param options Supported options are :
          *   - waitForDispatcher: Indicate if the agent will exit of retry connection with the dispatcher indefinitely. Default to false.
+         * @obsolete Not used any more since version 0.9.0. Mapped to start.
          * @returns {*}
          */
         Agent.prototype.connect = function(options) {
-            var _this = this;
-            var defer = Q.defer();
-
-            var retryHandle = setInterval(_doConnect, 5000);
-            Q.nextTick(_doConnect);
-
-            function _doConnect() {
-
-                /**
-                 * @event before-connect
-                 * @description Fired before the agent is connected to the dispatcher.
-                 */
-                _this.emit(&#x27;before-connect&#x27;);
-
-                dispatch(_this, &quot;agent-connect&quot;, _this.heartbeatSpec, function(err, resp, body) {
-
-                    if(err) {
-
-                        // If we&#x27;re not waiting for the dispatcher, let&#x27;s report an error and stop retrying
-                        if(!options.waitForDispatcher) {
-                            defer.reject(err);
-                            clearInterval(retryHandle);
-                        }
-                        else
-                            _this.log.warn(&quot;Dispatcher at url %s is not responding. Retrying in 5 seconds. Remove the waitForDispatcher option to stop automatic retries&quot;, _this.url);
-                    }
-                    else if(resp.statusCode == 200) {
-
-                        try {
-                            /**
-                             * @event connected
-                             * @description Fired when the dispatcher has been reached and accepted our initial connection request. The response
-                             *  to the connect call is passed in parameter
-                             *  @param response The response of the connect call as sent by the dispatcher
-                             */
-                            _this.emit(&#x27;connected&#x27;, body);
-
-                            // Launch the heartbeat timer
-                            _this.heartbeatHandle = setInterval(_.bind(heartbeat, _this), _this.heartbeatSpec.interval * 1000);
-
-                            // Launch the pending command polling
-                            _this.pendingCommandHandle = setInterval(_.bind(retrievePendingCommands, _this), _this.pollingSpec.interval * 1000);
-
-                            _this.pendingEventsHandle = setInterval(_.bind(retrievePendingEvents, _this), _this.pollingSpec.interval * 1000);
-
-                            // Register our command execution handler
-                            _this.on(&#x27;command&#x27;, _.bind(executeCommand, _this));
-
-                        }
-                        finally {
-                            _this.log.debug(&quot;Connection with dispatcher %s successfully established&quot;, _this.url);
-                            clearInterval(retryHandle);
-                            defer.resolve(_this);
-                        }
-                    }
-                    else {
-                        if(!options.waitForDispatcher) {
-                            defer.reject(resp);
-                            clearInterval(retryHandle);
-                        }
-                        else
-                            _this.log.warn(&quot;Dispatcher at url %s is not responding. Retrying in 5 seconds. Remove the waitForDispatcher option to stop automatic retries&quot;, _this.url);
-                    }
-                });
-            }
-
-            return defer.promise;
-        };
-
-        Agent.prototype.disconnect = function() {
-            return dispatch(this, &#x27;agent-disconnect&#x27;);
+            return this.start(options);
         };
 
         /**
@@ -254,8 +303,8 @@
 
                 dispatch(_this, &#x27;subscribe&#x27;, {
                     event:key,
-                    options:{}
-                }, function(err, resp) {
+                    options:options
+                }, _.pick(options, &quot;timeout&quot;), function(err, resp) {
                     if(err)
                         _this.log.error(err, &quot;Unable to subscribe to event %s&quot;, key);
                     else {
@@ -332,7 +381,7 @@
                     event:event,
                     payload: payload,
                     options:options
-                }, function(err, resp) {
+                }, _.pick(options, &quot;timeout&quot;), function(err, resp) {
                     if(err) defer.reject({success:false, error:err});
                     else if(resp &amp;&amp; resp.statusCode &gt;= 400) {
                         defer.reject({
@@ -352,6 +401,18 @@
         };
 
         /**
+         * @param key
+         * @param options
+         */
+        Agent.prototype.monitor = function(key, options) {
+            return dispatchP(&#x27;start-monitoring&#x27;, {key:key, interval:options.interval || 5});
+        };
+
+        Agent.prototype.cancelMonitoring = function(key) {
+            return dispatchP(&#x27;stop-monitoring&#x27;, {key:key});
+        };
+
+        /**
          * @method execute
          * @description Execute a remote command. Depending on the dispatcher context, the command might be executed by
          * the dispatcher itself or by another agent, having registered a remote command handler with the dispacher.
@@ -367,13 +428,18 @@
             var _this = this;
             var defer = Q.defer();
 
-            Q.nextTick(function(){
+            options = options || {};
+
+            Q.nextTick(function() {
+
+                // Keep a reference to our final deferred
+                options.deferredExecution = defer;
 
                 dispatch(_this, &#x27;execute-command&#x27;, {
                     commandKey:key,
                     payload:payload,
                     options:options||{}
-                }, function(err, resp, body){
+                }, _.pick(options, &quot;timeout&quot;), function(err, resp, body){
                     if(err) {
                         defer.reject({success:false, error:err});
                     }
@@ -409,14 +475,19 @@
             var _this = this;
             var defer = Q.defer();
 
-            Q.nextTick(function(){
+            options = options || {};
+
+            Q.nextTick(function() {
+
+                // Keep a reference to our final deferred
+                options.deferredExecution = defer;
 
                 dispatch(_this, &#x27;execute-command-on&#x27;, {
                     agentId: agentId,
                     commandKey:key,
-                    payload:payload,
-                    options:options||{}
-                }, function(err, resp, body) {
+                    payload:payload || {},
+                    options: _.omit(options||{}, &quot;deferredExecution&quot;)
+                }, _.pick(options, &quot;timeout&quot;, &quot;deferredExecution&quot;), function(err, resp, body) {
                     if(err) {
                         defer.reject({success:false, error:err});
                     }
@@ -456,7 +527,7 @@
                     event:event,
                     payload: payload,
                     options:options
-                }, function(err, resp) {
+                }, _.pick(options, &quot;timeout&quot;), function(err, resp) {
                     if(err) defer.reject({success:false, error:err});
                     else if(resp &amp;&amp; resp.statusCode &gt;= 400) {
                         defer.reject({
@@ -630,6 +701,10 @@
         function executeCommand(command) {
             var _this = this;
 
+            command.timeout = command.timeout || _this.timeout;
+
+            _this.log.debug(&quot;Executing command with timeout &quot;, command.timeout);
+
             // Make sure to parse the payload
             if(_.isString(command.payload)) {
                 _this.log.trace(&quot;Automatically converting string payload to object using JSON parse&quot;);
@@ -653,66 +728,99 @@
                 });
 
                 _this.log.trace(&quot;Waiting for command %s(%s) results for %s seconds&quot;, command.id, command.key, _this.timeout);
-                Q.timeout(deferredResponse.promise, _this.timeout * 1000).then(function(result) {
+                Q.timeout(deferredResponse.promise, command.timeout * 1000).then(function(result) {
                     _this.log.debug(&quot;Received command %s(%s) result&quot;, command.id, command.key);
                     _this.log.trace(&quot;Command %s(%s) result = &quot;, command.id, command.key, result);
 
                     dispatch(_this, &quot;command-response&quot;, {
                         commandId: command.id,
                         result: result
+                    }, function(err, resp) {
+                        if(err)
+                            _this.log.error(&quot;Unable to post command-response for command %s(%s)&quot;, command.key, command.id, err);
+                        else if(resp)
+                            _this.log.trace(&quot;Response for command %s(%s) was successfully posted&quot;, command.key, command.id);
                     });
 
                 }, function(err) {
-                    _this.log.error(&quot;Error while processing command %s (%s): &quot;, command.id, command.key, err);
+                    _this.log.error(&quot;Error while processing command %s(%s): &quot;, command.key, command.id, err);
                     dispatch(_this, &quot;command-error&quot;, {commandId: command.id, type: &#x27;timeout&#x27;, error: err});
+                }, function(progress){
+                    _this.log.trace(&quot;Progress notification received for command %s(%s)&quot;, command.key, command.id);
+                    dispatch(_this, &quot;post-command-progress&quot;, {commandId: command.id, progress:progress}, {noResponse:true});
                 });
 
             }
             else {
-                this.log.warn(&quot;No handler configured for command %s. We assume that a custom event handler has been installed on the &#x27;command&#x27; event&quot;, command.key);
+                this.log.warn(&quot;No handler configured for command %s(%s). We assume that a custom event handler has been installed on the &#x27;command&#x27; event&quot;, command.key, command.id);
             }
         }
 
         function heartbeat() {
-            var _this = this;
-            this.log.debug(&quot;Sending heartbeat to our dispatcher&quot;);
-            var data;
+            var _this = this, data, result;
+            _this.log.debug(&quot;Sending heartbeat to our dispatcher&quot;);
 
-            if(this.heartbeatSpec.payload) {
+            result = Q.fcall(function() {
+                var meta = {meta: {interval: _this.heartbeatSpec.interval}};
 
-                if(_.isFunction(this.heartbeatSpec.payload)) {
+                if(_this.heartbeatSpec.payload) {
 
-                    // If our payload function expect one parameter, it means it wants to use the deferred result approach
-                    if(_this.heartbeatSpec.payload.length == 1) {
-                        var defer = Q.defer();
-                        Q.nextTick(function() {
+                    if(_.isFunction(_this.heartbeatSpec.payload)) {
+                        _this.log.trace(&quot;We have a payload generator function&quot;);
+                        var payloadDefer = Q.defer();
+
+                        if(_this.heartbeatSpec.payload.length == 1) {
+                            var defer = Q.defer();
+
+                            _this.log.debug(&quot;Producing deferred payload&quot;);
+
+                            // Request the payload
                             _this.heartbeatSpec.payload.call(_this.heartbeatSpec.scope || _this, defer);
-                            Q.timeout(defer.promise, _this.heartbeatSpec.interval * 1000 || 30000).then(function(data) {
+
+                            Q.timeout(defer.promise, (_this.heartbeatSpec.interval-5) * 1000 || 25000).then(function(data) {
+
                                 _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
-                                dispatch(_this, &quot;heartbeat&quot;, {payload: data});
+                                payloadDefer.resolve(dispatchP(_this, &quot;heartbeat&quot;, {payload: data, meta: meta}));
+
                             }, function(err) {
+
                                 // Send a late heartbeat without a payload
-                                _this.log.warn(err, &quot;Unable to produce heartbeat payload.&quot;);
-                                dispatch(_this, &quot;heartbeat&quot;);
+                                _this.log.warn(err, &quot;Unable to produce heartbeat payload. Empty payload will be used&quot;);
+                                payloadDefer.resolve(dispatchP(_this, &quot;heartbeat&quot;, {meta: meta}));
                             });
-                        });
+
+                            return payloadDefer.promise;
+                        }
+                        else {
+                            _this.log.debug(&quot;Producing heartbeat payload synchronously&quot;);
+                            data = _this.heartbeatSpec.payload.call(_this.heartbeatSpec.scope || _this);
+                            _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
+                            return dispatchP(_this, &quot;heartbeat&quot;, {payload: data, meta: meta});
+                        }
+
                     }
                     else {
-                        data = _this.heartbeatSpec.payload.call(this.heartbeatSpec.scope || this);
-                        this.log.trace(data, &quot;Heartbeat payload produced&quot;);
-                        dispatch(this, &quot;heartbeat&quot;, {payload: data});
+                        _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
+                        return dispatchP(_this, &quot;heartbeat&quot;, {payload: _this.heartbeatSpec.payload, meta:meta});
                     }
 
                 }
-                else {
-                    data = this.heartbeatSpec.payload;
-                    this.log.trace(data, &quot;Heartbeat payload produced&quot;);
-                    dispatch(this, &quot;heartbeat&quot;, {payload: data});
-                }
+                else
+                    return dispatchP(_this, &quot;heartbeat&quot;, {meta:meta});
+            });
 
-            }
-            else
-                dispatch(this, &quot;heartbeat&quot;);
+            // Handle result and reprogram next heartbeat
+            result.then(function(resp) {
+                _this.log.debug(&quot;Heartbeat successfully sent&quot;, resp);
+            }, function(err)    {
+                _this.log.error(&quot;Unable to send heartbeat&quot;, err);
+            }).finally(function() {
+                _this.log.debug(&quot;Programming next heartbeat for %d seconds&quot;, _this.heartbeatSpec.interval);
+                _this.nextHeartbeat = setTimeout(_.bind(heartbeat, _this), _this.heartbeatSpec.interval * 1000);
+            });
+
+            return result;
+
         }
 
         function retrievePendingCommands() {
@@ -732,6 +840,65 @@
             }, dispatcher);
         }
 
+        function onCommandProgress(e) {
+            this.log.debug(&quot;Received command %s(%s) progress&quot;, e.cmd.key, e.cmd.id, e.data);
+            var cmd = this.waitingCommands[e.cmd.id];
+            if(cmd) {
+                this.log.trace(&quot;command %s has been found and progress will be updated&quot;);
+                cmd.defer.notify(e.data);
+            }
+            else
+                this.log.warn(&quot;command %s(%s) wasn&#x27;t found in waitingCommands&quot;, e.cmd.key, e.cmd.id);
+        }
+
+        /**
+         * @method dispatchP
+         * @private
+         * @description Helper used to package a command to the dispatcher. Will apply the right format and properly handle results, including errors.
+         * @param agent
+         * @param key
+         * @param payload
+         * @param options {Object} contains all options. timeout (default 30) is supported right now.
+         * @returns {Promise} A promise for the command result.
+         */
+        function dispatchP(agent, key, payload, options) {
+            var defer = Q.defer(), uuid = shortid.generate();
+
+            options = options || {};
+
+            if(arguments.length == 2) {
+                payload = {};
+            }
+
+            if(options.deferredExecution) {
+                var cmd = {
+                    uuid: uuid,
+                    defer: options.deferredExecution
+                };
+                agent.waitingCommands[uuid] = cmd;
+            }
+
+            request({
+                url: agent.url,
+                method:&#x27;POST&#x27;,
+                body: _.extend(payload, {uuid: uuid, key:key, v: agent.version, id: agent.id}),
+                json:true,
+                pool:false,
+                timeout:options.timeout * 1000 || agent.timeout * 1000
+            }, function(err, resp, body) {
+
+                if(err || resp.statusCode &gt;= 400)   {
+                    agent.log.error(&quot;Error received from server for request, but no callback was provided. %s&quot;, err, JSON.stringify({url:agent.url, method:&#x27;POST&#x27;, body:_.extend(payload, {key:key, v: agent.version, id: agent.id}) }));
+                    defer.reject({status:resp.statusCode, error:err});
+                }
+                else {
+                    defer.resolve(body);
+                }
+            });
+
+            return defer.promise;
+        }
+
         /**
          * @method dispatch
          * @private
@@ -740,38 +907,64 @@
          * @param key
          * @param payload
          * @param callback The callback that will be called when we receive the result (or error)
+         * @obsolete {dispatchP} should be used starting with version 0.9.0
          * @returns {*}
          */
-        function dispatch(agent, key, payload, callback) {
+        function dispatch(agent, key, payload, options, callback) {
+            var uuid = shortid.generate();
+
+            agent.log.debug(&quot;Executing command %s&quot;, uuid);
 
             if(_.isFunction(payload)) {
                 callback = payload;
                 payload = {};
+                options = {};
             }
-            else if(arguments.length === 2) {
+            else if(_.isFunction(options)) {
+                callback = options;
+                options = {};
+            }
+            else if(arguments.length == 2) {
                 payload = {};
+                options = {};
+            }
+            else if(arguments.length == 3) {
+                options = {};
+            }
+
+            if(options.deferredExecution) {
+
+                var cmd = {
+                    uuid: uuid,
+                    defer: options.deferredExecution
+                };
+
+                agent.waitingCommands[uuid] = cmd;
             }
 
             return request({
                 url: agent.url,
                 method:&#x27;POST&#x27;,
-                body: _.extend(payload, {key:key, v: agent.version, id: agent.id}),
+                body: _.extend(payload, {uuid: uuid, key:key, v: agent.version, id: agent.id}),
                 json:true,
-                timeout:agent.timeout * 1000
+                pool:false,
+                timeout:options.timeout * 1000 || agent.timeout * 1000
             }, function(err, resp, body) {
+
                 if(callback) {
                     _.bind(callback, agent)(err, resp, body);
                 }
                 else {
-                    agent.log.trace(&quot;No callback, emitting the response&quot;);
+                    agent.log.trace(&quot;No callback, emitting a response event&quot;, body);
 
                     if(err || resp.statusCode &gt;= 400)   {
 
-                        agent.log.error(&quot;Error received from server, but no callback was provided. %s&quot;, err);
+                        agent.log.error(&quot;Error received from server for request, but no callback was provided. %s&quot;, err, JSON.stringify({url:agent.url, method:&#x27;POST&#x27;, body:_.extend(payload, {key:key, v: agent.version, id: agent.id}) }));
+
                         if(resp)
                             agent.log.error(&quot;Status code is %d&quot;, resp.statusCode);
 
-                        agent.emit(&#x27;error&#x27;, {
+                        agent.emit(&#x27;dispatcher-error&#x27;, {
                             key: key,
                             error: err,
                             resp: resp
@@ -779,10 +972,12 @@
 
                     }
                     else {
-                        agent.emit(&#x27;dispatcher-response&#x27;, {
-                            key:key,
-                            body: body
-                        });
+                        if(!options.noResponse) {
+                            agent.emit(&#x27;dispatcher-response&#x27;, {
+                                key:key,
+                                body: body
+                            });
+                        }
                     }
                 }
             });

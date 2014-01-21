@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/start-monitoring.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/execute-command.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/start-monitoring.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -122,36 +122,24 @@
 var Q = require(&#x27;q&#x27;),
     redis = require(&#x27;redis&#x27;),
     _ = require(&#x27;lodash&#x27;),
-    shortid = require(&#x27;shortid&#x27;),
+    async = require(&#x27;async&#x27;),
     moment = require(&#x27;moment&#x27;);
+
+require(&#x27;underscore-query&#x27;);
 
 module.exports = function(request) {
     var _this = this;
-    this.log.trace(request, &quot;Handling execute-command command&quot;);
-    var defer = Q.defer().timeout(25000);
-
+    this.log.trace(request, &quot;Handling start-monitoring command&quot;);
+    var defer = Q.defer();
     Q.nextTick(function() {
-        var id = shortid.generate();
-        var cmd = _.extend(request, {$id:id});
+        _this.log.debug(&quot;Start monitoring %s every %d seconds&quot;, request.payload.interval);
 
-        // First try built-in commands
-        var commandHandler = _this.commandHandlers[request.commandKey];
-        if(commandHandler) {
-            commandHandler.call(_this, cmd).then(function(result){
-                defer.resolve(result);
-            }, function(err) {
-                defer.reject(err);
-            });
-        }
-        else {
-            _this.once(&#x27;command-result-&#x27;+id, function(result) {
-                defer.resolve(result);
-            });
-            // First try a direct handler
-            _this.emit(&#x27;execute-&#x27;+cmd.commandKey, cmd);
-            // Trigger the generic handler
-            _this.emit(&#x27;execute-command&#x27;, cmd);
-        }
+        defer.resolve(_this.installMonitor({
+            agent:request.id,
+            key:request.payload.key,
+            interval: request.payload.interval || 5,
+            snapshots: request.payload.snapshots || &quot;ALL&quot;
+        }));
 
     });
 

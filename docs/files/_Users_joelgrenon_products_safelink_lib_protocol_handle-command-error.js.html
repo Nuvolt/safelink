@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js - Safelink</title>
+    <title>/Users/joelgrenon/products/safelink/lib/protocol/handle-command-error.js - Safelink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>/Users/joelgrenon/services/smartscan/safelink/lib/protocol/broadcast.js <small>File</small></h1>
+    <h1>/Users/joelgrenon/products/safelink/lib/protocol/handle-command-error.js <small>File</small></h1>
 </div>
 
 <div class="file">
@@ -122,25 +122,18 @@
 var Q = require(&#x27;q&#x27;),
     redis = require(&#x27;redis&#x27;),
     _ = require(&#x27;lodash&#x27;),
+    async = require(&#x27;async&#x27;),
     moment = require(&#x27;moment&#x27;);
 
 module.exports = function(request) {
     var _this = this;
-    this.log.trace(request, &quot;Handling broadcast command&quot;);
+    this.log.debug(request, &quot;Handling command-error command&quot;);
     var defer = Q.defer();
     Q.nextTick(function() {
-
-        //TODO: Add channel support
-
-        // Just emit this custom event to all our listeners, including custom event listeners registered through
-        // subscriptions. These events will eventually arrive at their destination as agent retrieve their events from the queue.
-        _this.emit(request.event, _.extend(request.payload, { _replyTo: request.id}));
-
-        defer.resolve({success:true});
+        _this.applyCommandError(request.commandId, {type:request.type, error:request.error}).then(defer);
     });
-
     return defer.promise;
-};
+}
 
     </pre>
 </div>
