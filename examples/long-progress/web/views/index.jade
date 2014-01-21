@@ -1,0 +1,34 @@
+doctype html
+html
+  head
+    title= title
+    block styles
+      link(rel='stylesheet', href='/css/bootstrap.min.css')
+      link(rel='stylesheet', href='/css/main.css')
+    block scripts
+      script(src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js")
+      script(src="/js/bootstrap.min.js")
+      script(src='/js/main.js')
+      script(src='/socket.io/socket.io.js')
+
+  body
+    block content
+      .container
+        .page-header
+          h1= title
+          p.lead This sample demonstrates the use of Safelink to perform long-running tasks on remote agents.
+        h3 Explanations
+        p This web page is connected to an Express server through socket.io. All UI refreshes are thus provided by web sockets. When the Start Task button is pushed, the server will execute a command through safelink
+          | on the executer agent, through an embedded dispatcher (see app.js). The remote agent will send progress notification using the promise API, these progress will then be forwarded by
+          | the express server to the progress bar.
+        .panel.panel-default
+          .panel-heading: .panel-title
+            h2.clearfix
+              button#startTask.btn.btn-success.pull-right Start Task
+              button#stopTask.btn.btn-danger.pull-right.hidden Stop Task
+              | Task Progress
+          .panel-body
+            #taskProgress.progress: .progress-bar.progress-bar-info(style='width: 0%')
+              .span.sr-only 5% complete
+            h4 Progress Report
+            ul#report
