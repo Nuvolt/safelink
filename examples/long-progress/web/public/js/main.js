@@ -11,10 +11,16 @@
 
         socket.on('task-complete', function(result){
             console.log("task complete", result);
+            $start.toggleClass('hidden');
+            $stop.toggleClass('hidden');
+            reportProgress(100, "<span class='text-success'>Task has been successfully completed!</span>");
         });
 
         socket.on('task-error', function(err) {
             console.log("task error", err);
+            $start.toggleClass('hidden');
+            $stop.toggleClass('hidden');
+            reportProgress(100, "<span class='text-danger'>An error has been encountered:"+err+"</span>");
         });
 
         socket.on('task-progress', function(progress) {
@@ -23,6 +29,8 @@
 
         socket.on('task-stopped', function(result){
             console.log("Task stopped", result);
+            $start.toggleClass('hidden');
+            $stop.toggleClass('hidden');
         });
 
         $start.click(function() {

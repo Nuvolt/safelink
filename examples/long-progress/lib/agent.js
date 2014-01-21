@@ -11,19 +11,20 @@ module.exports.launch = function(opts) {
     });
 
     var task;
-    var progress = 0;
+    var progress = 5;
     var taskDeferred;
 
     agent.registerCommandHandler('start-long-task',function(cmd, deferred) {
         taskDeferred = deferred;
         console.log("Executing a long-task");
+        progress = 5;
         task = setInterval(function() {
-            deferred.notify({value: progress, msg: 'Long task is progressing: '+progress});
+            progress += 5;
             if(progress >= 100) {
                 deferred.resolve({progress:progress, success: true});
             }
             else
-                progress += 5;
+                deferred.notify({value: progress, msg: 'Long task is progressing: '+progress});
         }, 10000);
     });
 
