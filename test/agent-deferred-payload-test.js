@@ -17,15 +17,15 @@
         id: "a0e8d636-1378-4fd3-acfd-654e591d6893",
         heartbeat:{
             interval: 20,
-            payload: function() {
-                return {
+            payload: function(deferred) {
+                deferred.resolve({
                     gateways:{
                         101:{
                             500: "test",
                             501: "test2"
                         }
                     }
-                }
+                });
             }
         },
         endpoint:"http://localhost:9090/agent",
