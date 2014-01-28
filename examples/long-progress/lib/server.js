@@ -13,7 +13,7 @@ module.exports.launch = function(opts) {
     var agent = new Agent({
         id:'server-agent',
         endpoint: 'http://localhost:9090',
-        logLevel: 'debug'
+        logLevel: 'trace'
     });
     agent.start().then(function(){
         console.log("server-agent was successfully started");
@@ -40,25 +40,31 @@ module.exports.launch = function(opts) {
     io.sockets.on('connection', function(socket) {
 
         socket.on('start-task', function() {
-            console.log('Starting long task');
+            agent.log.info("Starting long task");
             agent.executeOn('long-process-executer', 'start-long-task', {}, {timeout:220}).then(function(result) {
-                console.log("Received task result", result);
-                socket.emit('task-complete', result);
+                agent.log.info("Received task result", result);
+                if(result.success)
+                    socket.emit('task-complete', result);
+                else
+                    socket.emit('task-error', err);
             }, function(err) {
-                console.log("Task error", err);
+                agent.log.error("Task error:",err);
                 socket.emit('task-error', err);
             }, function(progress) {
+                agent.log.debug("Task progress", progress);
                 socket.emit('task-progress', progress);
             });
 
         });
 
         socket.on('stop-task', function() {
-            console.log('Stopping long task');
+            agent.log.info("Stopping long task");
 
             agent.executeOn('long-process-executer', 'stop-long-task').then(function(result) {
+                agent.log.info("Task was stopped");
                 socket.emit('task-stopped', result);
             }, function(err) {
+                agent.log.error("Stop Task error", err);
                 socket.emit('task-error', err);
             });
 
