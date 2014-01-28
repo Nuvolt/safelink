@@ -1,0 +1,15 @@
+{
+  "name": "safelink-long-process-sample",
+  "version": "0.1.0",
+  "author": "Joel Grenon <jgrenon@vibes.io>",
+  "dependencies": {
+    "express": "~3.4.8",
+    "q": "~1.0.0",
+    "jade": "~1.1.5",
+    "socket.io": "~0.9.16"
+  },
+  "license": "Apache V2.0",
+  "engines": {
+    "node": ">=0.10.x"
+  }
+}

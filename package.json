@@ -29,7 +29,8 @@
     "lodash": "~2.2.1",
     "underscore-query": "http://npm.vibes.io/package/underscore-query/latest",
     "ws": "~0.4.31",
-    "eventemitter3": "~0.1.1"
+    "eventemitter3": "~0.1.1",
+    "json3": "~3.3.0"
   },
   "license": "Apache V2.0",
   "engines": {
