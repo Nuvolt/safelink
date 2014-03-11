@@ -30,7 +30,8 @@
     "underscore-query": "http://npm.vibes.io/package/underscore-query/latest",
     "ws": "~0.4.31",
     "eventemitter3": "~0.1.1",
-    "json3": "~3.3.0"
+    "json3": "~3.3.0",
+    "js-yaml": "~3.0.2"
   },
   "license": "Apache V2.0",
   "engines": {
