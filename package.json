@@ -1,6 +1,6 @@
 {
   "name": "safelink",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "author": "Joel Grenon <jgrenon@vibes.io>",
   "description": "SafeLink is an open-source NodeJS library created to maintain long-term communication between distant remote sites with varying network quality",
   "repository": {
