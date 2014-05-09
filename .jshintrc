@@ -1,0 +1,28 @@
+{
+    "curly": false,
+    "eqnull": true,
+    "eqeqeq": true,
+    "undef": true,
+    "asi": true,
+    "esnext": true,
+    "globals": {
+        "jQuery": true,
+        "console": true,
+        "module": true,
+        "require": true,
+        "process" : true,
+        "__dirname": true,
+        "__filename": true,
+        "setInterval": true,
+        "setTimeout" : true,
+        "Buffer": true,
+        "clearInterval": true,
+        "expect": true,
+        "describe": true,
+        "it": true,
+        "beforeEach": true,
+        "beforeAll": true,
+        "exports": true,
+        "clearTimeout": true
+    }
+}

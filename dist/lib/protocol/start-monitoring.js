@@ -1,0 +1,4 @@
+/*! 
+ safelink - v0.10.3 - 2014-05-09
+(C) 2014 Joel Grenon. Distributed under the Apache Version 2.0, January 2004. See attached license
+*/var Q=require("q"),redis=require("redis"),_=require("lodash"),async=require("async"),moment=require("moment");require("underscore-query"),module.exports=function(a){var b=this;this.log.trace(a,"Handling start-monitoring command");var c=Q.defer();return Q.nextTick(function(){b.log.debug("Start monitoring %s every %d seconds",a.payload.interval),c.resolve(b.installMonitor({agent:a.id,key:a.payload.key,interval:a.payload.interval||5,snapshots:a.payload.snapshots||"ALL"}))}),c.promise};

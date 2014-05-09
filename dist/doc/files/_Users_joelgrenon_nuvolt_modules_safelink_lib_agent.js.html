@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>/Users/joelgrenon/nuvolt/modules/safelink/lib/agent.js - Safelink</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap-responsive.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+        
+	    <img alt="Safelink" src="../assets/css/logo.png" style="max-height: 65%;" title="Safelink">
+        
+            Safelink
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.3.7</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Agent", "classes/Dispatcher", "classes/WatchDog"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+	    <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-tabs" style="margin-bottom:0;">
+            <li class="active"><a href="#classes" data-toggle="tab">Classes</a></li>
+            <li><a href="#modules" data-toggle="tab">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" placeholder="Type to filter APIs">
+        </div>
+
+        <div class="tab-content" style="border: 1px solid #DDD; border-top:0;">
+            <div class="tab-pane active" id="classes">
+                <ul id="api-classes" class="nav nav-list">
+                    
+                        <li><a href="../classes/Agent.html">Agent</a></li>
+                    
+                        <li><a href="../classes/Dispatcher.html">Dispatcher</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="tab-pane" id="modules">
+                <ul id="api-modules" class="nav nav-list">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        <div class="span9">
+                <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+    <h1>/Users/joelgrenon/nuvolt/modules/safelink/lib/agent.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+/**
+ *
+ * Copyright 2013 Joel Grenon
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+(function() {
+    var util = require(&#x27;util&#x27;),
+        request = require(&#x27;request&#x27;),
+        Q = require(&#x27;q&#x27;),
+        _ = require(&#x27;lodash&#x27;),
+        EventEmitter = require(&#x27;eventemitter3&#x27;),
+        Layer = require(&#x27;./transports&#x27;),
+        shortid = require(&#x27;shortid&#x27;),
+        bunyan = require(&#x27;bunyan&#x27;);
+
+    require(&#x27;underscore-query&#x27;);
+
+    var Agent = (function() {
+
+        /**
+         * @class Agent
+         * @description Primary client-side abstraction used to establish and manage communication with a central dispatcher
+         * @param cfg
+         * @constructor
+         */
+        function Agent(cfg) {
+            var id = cfg.id || shortid.generate();
+
+            // Create our transport layer
+            this.layer = new Layer(_.extend(_.pick(cfg, &#x27;logLevel&#x27;), {logName: id+&quot;-transport-layer&quot;}));
+
+            this.id = id;
+            this.version = cfg.version || 100;
+            this.url = cfg.endpoint;
+            this.timeout = cfg.timeout || 30;
+            this.websocket = cfg.websocket || false;
+            this.log = cfg.log || bunyan.createLogger({name:id, level:cfg.logLevel || &#x27;info&#x27;});
+            this.heartbeatSpec = cfg.heartbeat || { interval: 30};
+            this.pollingSpec = cfg.polling || { interval: 5 };
+            this.commandHandlers = _.defaults(cfg.commandHandlers || {}, {
+                configure: simpleCommandHandler(this, &#x27;configure&#x27;)
+            });
+
+            // Add basic event handlers
+            this.eventHandlers = [{
+                key:&#x27;command-progress&#x27;,
+                scope:this,
+                handler:onCommandProgress
+            }];
+
+            EventEmitter.call(this);
+        }
+
+        util.inherits(Agent, EventEmitter);
+
+        /**
+         * Called to initiate the heartbeat process and install all transports
+         * @return {Promise} resolved when the agent is started
+         */
+        Agent.prototype.start = function() {
+            var _this = this;
+            var defer = Q.defer();
+
+            Q.nextTick(function() {
+                // Hook to let host perform extra configuration before the agent is started
+                 _this.emit(&#x27;before-start&#x27;);
+
+                // Register an internal handler to send heartbeat when requested
+                _this.on(&#x27;send-heartbeat&#x27;, _.bind(heartbeat, _this));
+
+                // Avoid starting automatic heartbeat if our host is requesting manual heartbeat control
+                if(!_this.heartbeatSpec.manual) {
+
+                    // Send the first heartbeat
+                    _this.emit(&#x27;send-heartbeat&#x27;);
+                }
+
+                // Launch the pending command polling
+                if(_this.pendingCommandHandle)
+                    clearInterval(_this.pendingCommandHandle);
+                _this.pendingCommandHandle = setInterval(_.bind(retrievePendingCommands, _this), _this.pollingSpec.interval * 1000);
+
+                if(_this.pendingEventsHandle)
+                    clearInterval(_this.pendingEventsHandle);
+                _this.pendingEventsHandle = setInterval(_.bind(retrievePendingEvents, _this), _this.pollingSpec.interval * 1000);
+
+                // Register our command execution handler
+                _this.on(&#x27;command&#x27;, _.bind(executeCommand, _this));
+
+                // Establish the web socket connection
+                if(_this.websocket) {
+                    _this.layer.ws.init(_this.websocket);
+                }
+
+                defer.resolve(_this);
+            });
+
+            return defer.promise;
+        };
+
+        Agent.prototype.stop = function() {
+            this.log.debug(&quot;Stopping agent %s&quot;, this.id);
+            this.suspend();
+        };
+
+        Agent.prototype.suspend = function(duration) {
+            var _this = this;
+            this.suspended = true;
+
+            if(this.pendingCommandHandle) {
+                this.log.trace(&quot;Stopping pending command handler&quot;);
+                clearInterval(this.pendingCommandHandle);
+            }
+
+            if(this.pendingEventsHandle) {
+                this.log.trace(&quot;Stopping pending event handler&quot;);
+                clearInterval(this.pendingEventsHandle);
+            }
+
+            if(this.nextHeartbeat) {
+                this.log.trace(&quot;Preventing next heartbeat from firing&quot;);
+                clearTimeout(this.nextHeartbeat);
+            }
+
+            if(this.resumeTimer) {
+                this.log.trace(&quot;Cancel the resume timer&quot;);
+                clearTimeout(this.resumeTimer);
+            }
+
+            if(duration) {
+                this.resumeTimer = setTimeout(function() {
+                    _this.resume();
+                }, duration * 1000);
+            }
+        };
+
+        Agent.prototype.resume = function() {
+            this.suspended = false;
+
+            // Launch the pending command polling
+            if(this.pendingCommandHandle)
+                clearInterval(this.pendingCommandHandle);
+            this.pendingCommandHandle = setInterval(_.bind(retrievePendingCommands, this), this.pollingSpec.interval * 1000);
+
+            if(this.pendingEventsHandle)
+                clearInterval(this.pendingEventsHandle);
+            this.pendingEventsHandle = setInterval(_.bind(retrievePendingEvents, this), this.pollingSpec.interval * 1000);
+
+            delete this.resumeTimer;
+
+            if(!this.heartbeatSpec.manual) {
+                this.emit(&#x27;send-heartbeat&#x27;);
+            }
+        };
+
+        /**
+         * @method connect
+         * @param options Supported options are :
+         *   - waitForDispatcher: Indicate if the agent will exit of retry connection with the dispatcher indefinitely. Default to false.
+         * @obsolete Not used any more since version 0.9.0. Mapped to start.
+         * @returns {*}
+         */
+        Agent.prototype.connect = function(options) {
+            return this.start(options);
+        };
+
+        /**
+         * @method subscribeTo
+         * @description Will connect this agent with remote events emitted by the dispatcher. These events may be triggered by the dispatcher or other agents connected
+         *  on the network. For now, you can only subscribe to events that are sent to you, but in the future, we will add support for channels to receive &#x27;room-like&#x27; messages.
+         * @param key {String} The event key we wish to subscribe to remotely
+         * @param fn {Function} The handler that will be called when the event is triggered remotely
+         * @param options Options modifying the behavior to the function.
+         *
+         *  - **force** : Avoid reusing a subscription if already in place and
+         *  send the request to the dispatcher anyway. This is used when the dispatcher just failed and we are instructed to reconnect our event handlers.
+         */
+        Agent.prototype.subscribeTo = function(key, fn, options) {
+            var promise, _this = this;
+            options = options || {};
+
+            var handler = _.query.build(this.eventHandlers).and({ key: key }).first();
+            if(!handler || options.force) {
+
+                // Notify the dispatch of our subscription interest
+                promise = _this.layer.send(this, &#x27;subscribe&#x27;,{
+                    event:key,
+                    options:options
+                }, _.pick(options, &quot;timeout&quot;));
+
+                // Perform internal subscription
+                promise.then(function() {
+
+                    if(!options.force) {
+                        _this.log.debug(&quot;Registering a new event handler for event %s&quot;, key);
+                        _this.eventHandlers.push({
+                            key: key,
+                            handler: fn,
+                            scope: _this
+                        });
+                    }
+                }, function(err) {
+                    _this.log.error(err, &quot;Unable to subscribe to event %s&quot;, key);
+                });
+
+            }
+            else
+                _this.log.warn(&quot;Already subscribed to event %s. Existing subscription will be reused&quot;, key);
+
+            return promise;
+        };
+
+        /**
+         * @method unsubscribeFrom
+         * @param key
+         */
+        Agent.prototype.unsubscribeFrom = function(key) {
+            var _this = this, promise;
+
+            var handler = _.query(this.eventHandlers, { key: key });
+            if(handler) {
+
+                promise = _this.layer.send(this, &#x27;unsubscribe&#x27;,  {
+                    channelId: handler.channelId,
+                    event:key
+                });
+
+                promise.then(function() {
+                    _this.log.debug(&quot;Removing event handler for event %s in channel %s&quot;, key, handler.channelId);
+                    _this.eventHandlers.remove(handler);
+                }, function(err) {
+                    _this.log.error(err, &quot;Unable to subscribe to event %s&quot;, key);
+                });
+
+            }
+            else
+                _this.log.warn(&quot;No subscription found for event %s. Unable to unsubscribe&quot;, key);
+
+            return promise;
+        };
+
+        /**
+         * @method broadcast
+         * @description Send a notification to whomever is listening to. This is not directed to a specific agent, but to anyone
+         *  on the network, including the dispatcher.
+         * @param event {String} The key identifying the event
+         * @param payload {Object} The event data
+         * @param options Options modifying the behavior of the broadcast.
+         * @returns {Promise} A promise resolved as soon as the event has been broadcasted. Nothing is returned (fire and forget)
+         */
+        Agent.prototype.broadcast = function(event, payload, options) {
+            return this.layer.send(this, &#x27;broadcast&#x27;,{ event:event, payload: payload || {}, options:options }, _.pick(options || {}, &quot;timeout&quot;));
+        };
+
+        /**
+         * @param key
+         * @param options
+         */
+        Agent.prototype.monitor = function(key, options) {
+            return this.layer.send(this, &#x27;start-monitoring&#x27;, {key:key, interval:options.interval || 5});
+        };
+
+        Agent.prototype.cancelMonitoring = function(key) {
+            return this.layer.send(this, &#x27;stop-monitoring&#x27;, {key:key});
+        };
+
+        /**
+         * @method execute
+         * @description Execute a remote command. Depending on the dispatcher context, the command might be executed by
+         * the dispatcher itself or by another agent, having registered a remote command handler with the dispacher.
+         * @param key The key of the command to execute. It must be registered by the dispatcher or an agent somewhere to receive a response.
+         * @param payload The data to send with the command.
+         * @param options Options that may change the way the command is executed. Supported options are:
+         *
+         * - **timeout** : The number of seconds to wait for a response. Default to 30 seconds.
+         *
+         * @returns {Promise} A promise for the command result.
+         */
+        Agent.prototype.execute = function(key, payload, options) {
+            return this.layer.send(this, &#x27;execute-command&#x27;, { commandKey:key, payload:payload, options:options||{} }, _.pick(options || {}, &quot;timeout&quot;));
+        };
+
+        /**
+         * @method executeOn
+         * @description Execute a remote command on a specific agent. The command will be forward directly to this agent.
+         * @param key The key of the command to execute. It must be registered by the dispatcher or an agent somewhere to receive a response.
+         * @param payload The data to send with the command.
+         * @param options Options that may change the way the command is executed. Supported options are:
+         *
+         * - **timeout** : The number of seconds to wait for a response. Default to 30 seconds.
+         *
+         * @returns {Promise} A promise for the command result.
+         */
+        Agent.prototype.executeOn = function(agentId, key, payload, options) {
+            return this.layer.send(this, &#x27;execute-command-on&#x27;, { agentId: agentId, commandKey:key, payload:payload || {}, options: options || {} }, _.pick(options || {}, &quot;timeout&quot;));
+        };
+
+        /**
+         *
+         * @param agentId {String|Array} One or more agentIds that should receive this event.
+         * @param event {String} The key of the event to send
+         * @param payload {Payload} Data that will be associated with this event.
+         * @param options {Object} Options that will affect the way the event is emitted
+         */
+        Agent.prototype.emitTo = function(agentId, event, payload, options) {
+            return this.layer.send(this, &#x27;emit-to&#x27;, { agents: agentId, event:event, payload: payload, options:options }, _.pick(options, &quot;timeout&quot;));
+        };
+
+        /**
+         * @method registerCommandHandler
+         * @description Add or replace a command handler. This handler will be execute each time a command of type **key** will be received.
+         * @param key The command key to attach this handler
+         * @param fn The handler that will be executed when a command of the specified key is received
+         */
+        Agent.prototype.registerCommandHandler = function(key, fn) {
+            this.log.debug(&quot;Register a new command handler %s&quot;, key);
+            this.commandHandlers = this.commandHandlers || {};
+            this.commandHandlers[key] = fn;
+        };
+
+        /**
+         * @method retrieveCommands
+         * @description Force the retrieval of any pending commands from the dispatcher.
+         *         *
+         * @returns {*}
+         */
+        Agent.prototype.retrieveCommands = function() {
+            var promise, _this = this;
+
+            promise = _this.layer.send(this, &#x27;retrieve-pending-commands&#x27;);
+
+            promise.then(function(result) {
+
+                if(_.isArray(result.data)) {
+                    _this.log.debug(&quot;Received %d commands to execute&quot;, result.data.length);
+                    _.each(result.data, function(command) {
+                        _this.log.trace(&quot;Executing command %s&quot;, command.key);
+                        _this.emit(&#x27;command&#x27;, command);
+                    });
+                }
+                else {
+                    _this.emit(&#x27;transport-error&#x27;, {
+                        action:&#x27;retrieve-pending-commands&#x27;,
+                        error: &quot;Invalid command list&quot;
+                    });
+                }
+
+            }, function(err) {
+                _this.log.error(&quot;Unable to retrieve pending commands&quot;, err);
+
+                /**
+                 * @event network-error
+                 * @description Emitted when there is a network problem and we were unable to communicate with the dispatcher.
+                 * @param action {String} The name of the action that triggered the error
+                 * @param error {Error|String} The actual error that was thrown
+                 */
+                _this.emit(&#x27;transport-error&#x27;, {
+                    action:&#x27;retrieve-pending-commands&#x27;,
+                    error: err
+                });
+
+            }).catch(function(err) {
+                _this.log.error(&quot;Exception encountered while retrieving pending commands&quot;, err);
+
+                /**
+                 * @event network-error
+                 * @description Emitted when there is a network problem and we were unable to communicate with the dispatcher.
+                 * @param action {String} The name of the action that triggered the error
+                 * @param error {Error|String} The actual error that was thrown
+                 */
+                _this.emit(&#x27;transport-error&#x27;, {
+                    action:&#x27;retrieve-pending-commands&#x27;,
+                    error: err
+                });
+
+            });
+
+            return promise;
+        };
+
+        /**
+         * @method retrieveEvents
+         * @description Retrieve all pending events for this agent.
+         * @param options
+         *
+         * - delay: The number of seconds we have to wait before retrieving the events. Default to 0.
+         * @returns {*}
+         */
+        Agent.prototype.retrieveEvents = function(options) {
+            var promise, _this = this;
+
+            promise = _this.layer.send(this, &#x27;retrieve-pending-events&#x27;);
+            promise.then(function(result) {
+                _this.log.trace(&quot;Retrieve pending events successfully completed&quot;, result);
+
+                if(_.isArray(result.data)) {
+                    _this.log.debug(&quot;Received %d events to handle&quot;, result.data.length);
+                    _.each(result.data, function(e) {
+                        _this.log.trace(&quot;Received event&quot;, e);
+
+                        // Notify all registered event handlers
+                        //FIXME: Why no use our emitter interface here?
+                        var handlers = _.query(_this.eventHandlers, {key: e.key});
+                        _.each(handlers, function(h) {
+                            h.handler.call(h.scope || _this, e.data);
+                        });
+
+                    });
+                }
+                else {
+                    _this.emit(&#x27;transport-error&#x27;, {
+                        action:&#x27;retrieve-pending-events&#x27;,
+                        error: &quot;Invalid event list&quot;
+                    });
+                }
+
+            }, function(err) {
+                _this.log.error(&quot;Unable to retrieve pending events&quot;, err);
+
+                /**
+                 * @event transport-error
+                 * @description Emitted when there is a network problem and we were unable to communicate with the dispatcher.
+                 * @param action {String} The name of the action that triggered the error
+                 * @param error {Error|String} The actual error that was thrown
+                 */
+                _this.emit(&#x27;transport-error&#x27;, {
+                    action:&#x27;retrieve-pending-events&#x27;,
+                    error: err
+                });
+
+            }).catch(function(err){
+                _this.log.error(&quot;Exception encountered while retrieving pending events&quot;, err);
+
+                _this.emit(&#x27;transport-error&#x27;, {
+                    action:&#x27;retrieve-pending-events&#x27;,
+                    error: err
+                });
+            });
+
+            return promise;
+        };
+
+        function executeCommand(command) {
+            var _this = this;
+
+            command.timeout = command.timeout || _this.timeout;
+
+            _this.log.debug(&quot;Executing command with timeout &quot;, command.timeout);
+
+            // Make sure to parse the payload
+            if(_.isString(command.payload)) {
+                _this.log.trace(&quot;Automatically converting string payload to object using JSON parse&quot;);
+                try {
+                    command.payload = JSON.parse(command.payload);
+                }
+                catch(err) {
+                    _this.log.error(&quot;Unable to parse command %s(%s) payload. error=&quot;, command.id, command.key, err);
+                }
+            }
+
+            _this.log.debug(&quot;Looking for installed handle for command %s (%s)&quot;, command.id, command.key);
+
+            var handler = this.commandHandlers[command.key];
+            if(handler) {
+                var deferredResponse = Q.defer();
+
+                Q.nextTick(function() {
+                    _this.log.trace(&quot;Executing command handler&quot;, handler);
+                    _.bind(handler, _this)(command, deferredResponse);
+                });
+
+                _this.log.trace(&quot;Waiting for command %s(%s) results for %s seconds&quot;, command.id, command.key, _this.timeout);
+                Q.timeout(deferredResponse.promise, command.timeout * 1000).then(function(result) {
+                    _this.log.debug(&quot;Received command %s(%s) result&quot;, command.id, command.key);
+                    _this.log.trace(&quot;Command %s(%s) result = &quot;, command.id, command.key, result);
+
+                    var promise = _this.layer.send(_this, &#x27;command-response&#x27;, {
+                        commandId: command.id,
+                        result: result
+                    });
+
+                    promise.then(function(){
+                        _this.log.trace(&quot;Response for command %s(%s) was successfully posted&quot;, command.key, command.id);
+                    }, function(err) {
+                        _this.log.error(&quot;Unable to post command-response for command %s(%s)&quot;, command.key, command.id, err);
+                    });
+
+                    return promise;
+
+                }, function(err) {
+                    _this.log.error(&quot;Error while processing command %s(%s): &quot;, command.key, command.id, err);
+                    _this.layer.send(_this, &#x27;command-error&#x27;, {commandId: command.id, type: &#x27;timeout&#x27;, error: err});
+                }, function(progress) {
+                    _this.log.trace(&quot;Progress notification received for command %s(%s)&quot;, command.key, command.id);
+                    _this.layer.send(_this, &quot;post-command-progress&quot;, {commandId: command.id, progress:progress}, {noResponse:true})
+                }).catch(function(err) {
+                    _this.log.error(&quot;Exception! Error while processing command %s(%s): &quot;, command.key, command.id, err);
+                    _this.layer.send(_this, &#x27;command-error&#x27;, {commandId: command.id, type: &#x27;timeout&#x27;, error: err});
+                });
+
+            }
+            else {
+                _this.log.warn(&quot;No handler configured for command %s(%s). We assume that a custom event handler has been installed on the &#x27;command&#x27; event&quot;, command.key, command.id);
+            }
+        }
+
+        function heartbeat() {
+            var _this = this, data, result;
+            _this.log.debug(&quot;Sending heartbeat to our dispatcher&quot;);
+
+            result = Q.fcall(function() {
+                var meta = {meta: {interval: _this.heartbeatSpec.interval}};
+
+                if(_this.heartbeatSpec.payload) {
+
+                    if(_.isFunction(_this.heartbeatSpec.payload)) {
+                        _this.log.trace(&quot;We have a payload generator function&quot;);
+                        var payloadDefer = Q.defer();
+
+                        if(_this.heartbeatSpec.payload.length === 1) {
+                            var defer = Q.defer();
+
+                            _this.log.debug(&quot;Producing deferred payload&quot;);
+
+                            // Request the payload
+                            _this.heartbeatSpec.payload.call(_this.heartbeatSpec.scope || _this, defer);
+
+                            Q.timeout(defer.promise, (_this.heartbeatSpec.interval-5) * 1000 || 25000).then(function(data) {
+
+                                _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
+                                payloadDefer.resolve(_this.layer.send(_this, &quot;heartbeat&quot;, {payload: data, meta: meta}));
+
+                            }, function(err) {
+
+                                // Send a late heartbeat without a payload
+                                _this.log.warn(err, &quot;Unable to produce heartbeat payload. Empty payload will be used&quot;, err);
+                                payloadDefer.resolve(_this.layer.send(_this, &quot;heartbeat&quot;, {meta: meta}));
+                            }).catch(function(err) {
+                                // Send a late heartbeat without a payload
+                                _this.log.warn(err, &quot;Exception! Unable to produce heartbeat payload. Empty payload will be used&quot;, err);
+                                payloadDefer.resolve(_this.layer.send(_this, &quot;heartbeat&quot;, {meta: meta}));
+                            });
+
+                            return payloadDefer.promise;
+                        }
+                        else {
+                            _this.log.debug(&quot;Producing heartbeat payload synchronously&quot;);
+                            data = _this.heartbeatSpec.payload.call(_this.heartbeatSpec.scope || _this);
+                            _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
+                            return _this.layer.send(_this, &quot;heartbeat&quot;, {payload: data, meta: meta});
+                        }
+
+                    }
+                    else {
+                        _this.log.trace(data, &quot;Heartbeat payload produced&quot;);
+                        return _this.layer.send(_this, &quot;heartbeat&quot;, {payload: _this.heartbeatSpec.payload, meta:meta});
+                    }
+
+                }
+                else
+                    return _this.layer.send(_this, &quot;heartbeat&quot;, {meta:meta});
+            });
+
+            // Handle result and reprogram next heartbeat
+            result.then(function(resp) {
+                _this.log.debug(&quot;Heartbeat successfully sent&quot;, resp);
+            }, function(err)    {
+                _this.log.error(&quot;Unable to send heartbeat&quot;, err);
+            }).catch(function(err) {
+                _this.log.error(&quot;Exception! Unable to send heartbeat&quot;, err);
+            }).finally(function() {
+                if(!_this.heartbeatSpec.manual) {
+                    _this.log.debug(&quot;Programming next heartbeat for %d seconds&quot;, _this.heartbeatSpec.interval);
+                    _this.nextHeartbeat = setTimeout(function(){ _this.emit(&#x27;send-heartbeat&#x27;)}, _this.heartbeatSpec.interval * 1000);
+                }
+            });
+
+            return result;
+
+        }
+
+        function retrievePendingCommands() {
+            this.log.trace(&quot;Retrieving pending commands&quot;);
+            this.retrieveCommands();
+        }
+
+        function retrievePendingEvents() {
+            this.log.trace(&quot;Retrieving pending events&quot;);
+            this.retrieveEvents();
+        }
+
+        function simpleCommandHandler(dispatcher, key) {
+            return _.bind(function(command, deferredResult) {
+                this.emit(key, command);
+                deferredResult.resolve();
+            }, dispatcher);
+        }
+
+        function onCommandProgress(e) {
+            this.log.debug(&quot;Received command %s(%s) progress&quot;, e.cmd.key, e.cmd.id, e.data);
+            var cmd = this.layer.getResult(e.cmd.id);
+            if(cmd) {
+                this.log.trace(&quot;command %s(%s) has been found and progress will be updated&quot;, e.cmd.key, e.cmd.id);
+                cmd.defer.notify(e.data);
+            }
+            else
+                this.log.warn(&quot;command %s(%s) wasn&#x27;t found in waitingCommands&quot;, e.cmd.key, e.cmd.id);
+        }
+
+        return Agent;
+    })();
+
+    module.exports = Agent;
+
+})();
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>

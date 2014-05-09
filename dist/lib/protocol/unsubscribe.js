@@ -1,0 +1,4 @@
+/*! 
+ safelink - v0.10.3 - 2014-05-09
+(C) 2014 Joel Grenon. Distributed under the Apache Version 2.0, January 2004. See attached license
+*/var Q=require("q"),redis=require("redis"),_=require("lodash"),async=require("async"),moment=require("moment");require("underscore-query"),module.exports=function(a){var b=this;this.log.trace(a,"Handling unsubscribe command");var c=Q.defer();return Q.nextTick(function(){var d=_.query.build(b.eventSubscriptions).and({agentId:a.id}).first();d?(b.removeListener(a.event,d.listener(a)),d.events.remove(a.event),0===d.events.length&&b.eventSubscriptions.remove(d),b.log.info("Agent successfully unsubscribed from event %d",a.event)):b.log.warn("Tried to unsubscribe a missing subscription. Nothing was done"),c.resolve({success:!0})}),c.promise};
