@@ -4,33 +4,37 @@
     <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Safelink Status Report</h1>
-    <table class="table table-bordered">
-        <tr>
-            <td>PENDING</td>
-            <td>{{PENDING}}</td>
-        </tr>
-        <tr>
-            <td>COMPLETE</td>
-            <td>{{COMPLETE}}</td>
-        </tr>
-        <tr>
-            <td>ACTIVE</td>
-            <td>{{ACTIVE}}</td>
-        </tr>
-        <tr>
-            <td>GARBAGE COLLECTED</td>
-            <td>{{GARBAGE_COLLECTED}}</td>
-        </tr>
-    </table>
-    <h1>Active Agents</h1>
-    <table class="table table-condensed table-stripped">
-        {{#each agents}}
+    <div class="page-header">
+        <h1>Safelink Status Report</h1>
+    </div>
+    <div class="container">
+        <table class="table table-bordered">
             <tr>
-                <td>{{id}}</td>
-                <td>{{ts}}</td>
+                <td>PENDING</td>
+                <td>{{PENDING}}</td>
             </tr>
-        {{/each}}
-    </table>
+            <tr>
+                <td>COMPLETE</td>
+                <td>{{COMPLETE}}</td>
+            </tr>
+            <tr>
+                <td>ACTIVE</td>
+                <td>{{ACTIVE}}</td>
+            </tr>
+            <tr>
+                <td>GARBAGE COLLECTED</td>
+                <td>{{GARBAGE_COLLECTED}}</td>
+            </tr>
+        </table>
+        <h1>Active Agents</h1>
+        <table class="table table-condensed table-stripped">
+            {{#each agents}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{ts}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
 </body>
 </html>
