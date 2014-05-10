@@ -25,12 +25,12 @@
     </table>
     <h1>Active Agents</h1>
     <table class="table table-condensed table-stripped">
-        {{#list agents}}
+        {{#each agents}}
             <tr>
                 <td>{{id}}</td>
                 <td>{{ts}}</td>
             </tr>
-        {{/list}}
+        {{/each}}
     </table>
 </body>
 </html>
