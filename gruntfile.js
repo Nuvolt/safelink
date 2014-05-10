@@ -43,7 +43,7 @@ module.exports = function(grunt) {
                 dest: './dist/doc'
             },
             support_files: {
-                src: ['./package.json', './readme.md', './LICENSE-2.0.txt'],
+                src: ['./package.json', './readme.md', './LICENSE-2.0.txt', './lib/status_report.hbs'],
                 dest: './dist/'
             }
         }
