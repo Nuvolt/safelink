@@ -1,6 +1,6 @@
 (function(){
 
-    var Agent = require("../index").Agent,
+    var Agent = require("../dist/agent").Agent,
         _ = require('lodash'),
         bunyan = require('bunyan'),
         moment = require('moment');

@@ -7,7 +7,7 @@ module.exports.launch = function(opts) {
     var agent = new Agent({
         id: "long-process-executer",
         endpoint: "http://localhost:9090",
-        logLevel: 'info'
+        logLevel: 'debug'
     });
 
     var task;

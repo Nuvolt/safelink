@@ -15,12 +15,20 @@ module.exports = function(grunt) {
                 },
                 mangle: true
             },
-            safelink: {
+            all: {
                 files: [{
                     expand: true,
                     cwd: '.',
                     src: ['lib/**/*.js', './index.js'],
                     dest: 'dist'
+                }]
+            },
+            agent: {
+                files: [{
+                    expand: true,
+                    cwd: '.',
+                    src: ['lib/**/*.js', '!lib/dispatcher.js', '!lib/protocol/**', '!lib/watchdog.js', './main.js'],
+                    dest: 'dist/agent'
                 }]
             }
         },
@@ -42,9 +50,30 @@ module.exports = function(grunt) {
                 src: ['**/*.*'],
                 dest: './dist/doc'
             },
+            agent_doc:{
+                expand: true,
+                cwd: './docs',
+                src: ['**/*.*'],
+                dest: './dist/agent/doc'
+            },
             support_files: {
                 src: ['./package.json', './readme.md', './LICENSE-2.0.txt', './lib/status_report.hbs'],
                 dest: './dist/'
+            },
+            agent_support_files: {
+                files:[{
+                    src:['./package-agent.json', './readme.md', './LICENSE-2.0.txt'],
+                    dest: './dist/agent/',
+                    cwd: '.',
+                    expand: true,
+                    rename: function(dest, src) {
+                        console.log(src);
+                        if(src === './package-agent.json')
+                            return dest + "package.json";
+                        else
+                            return dest + src;
+                    }
+                }]
             }
         }
     });
@@ -53,5 +82,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.registerTask('default', ['clean:build', 'jshint', 'uglify:safelink', 'copy:doc', 'copy:support_files' ]);
+
+    grunt.registerTask('default', ['clean:build', 'jshint', 'uglify:all', 'copy:doc', 'copy:support_files' ]);
+    grunt.registerTask('agent', ['clean:build', 'jshint', 'uglify:agent', 'copy:agent_doc', 'copy:agent_support_files']);
 };

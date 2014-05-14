@@ -1,5 +1,5 @@
 {
-  "name": "safelink",
+  "name": "safelink-agent",
   "version": "0.11.1",
   "author": "Joel Grenon <jgrenon@vibes.io>",
   "description": "SafeLink is an open-source NodeJS library created to maintain long-term communication between distant remote sites with varying network quality",
@@ -17,18 +17,14 @@
     "long-polling",
     "websocket"
   ],
+  "main": "./main",
   "dependencies": {
     "async": "~0.2.9",
     "bunyan": "~0.21.4",
     "eventemitter3": "~0.1.1",
-    "handlebars": "^2.0.0-alpha.2",
-    "hiredis": "~0.1.15",
-    "js-yaml": "~3.0.2",
     "json3": "~3.3.0",
     "lodash": "~2.2.1",
-    "moment": "~2.1.0",
     "q": "~0.9.6",
-    "redis": "~0.8.4",
     "request": "~2.27.0",
     "shortid": "~2.0.0",
     "underscore-query": "http://npm.vibes.io/package/underscore-query/latest",
